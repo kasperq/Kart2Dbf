@@ -379,10 +379,9 @@ object DM: TDM
         'iif(document.struk_id < 0,cast(kart.kei_id2 as char(4)), cast(ma' +
         'trop.kei_id as char(4))) eiz,'
       'ediz.neis mei,'
-      'iif(document.tip_op_id in (32, 103, 104, 112, 113),'
       
-        '    iif(configumc.struk_id in (542, 543, 544, 545, 546, 708, -54' +
-        '0), struk.stkod,'#39#39'), struk.stkod) cex,'
+        'iif(document.tip_op_id in (32, 103, 104, 112, 113), '#39#39', struk.st' +
+        'kod) cex,'
       'iif(document.struk_id in (163, 87),'
       '    struk.stkod,'
       '    iif(document.tip_op_id in (32, 103, 104, 112, 113),'
