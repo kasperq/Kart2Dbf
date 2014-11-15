@@ -387,7 +387,7 @@ object DM: TDM
       '    iif(document.tip_op_id in (32, 103, 104, 112, 113),'
       
         '        iif(configumc.struk_id in (542, 543, 544, 545, 546, 708,' +
-        ' -540), configumc.stname, configumc.stkod), struk.stname)) post,'
+        ' -540), '#39'1600'#39', configumc.stkod), struk.stname)) post,'
       'kart.cena money,'
       'iif(document.tip_op_id in (32, 103, 104, 112, 113),'
       '    iif(kart.sum_nds = 0, kart.summa, kart.sum_nds),'
