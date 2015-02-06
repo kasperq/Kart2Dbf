@@ -2331,6 +2331,7 @@ object KartVDbfForm: TKartVDbfForm
     Height = 25
     Caption = #1056#1072#1089#1093#1086#1076#1099' '#1073#1072#1079#1072
     TabOrder = 9
+    Visible = False
     OnClick = Button5Click
   end
   object lastNeobrRashBtn: TButton

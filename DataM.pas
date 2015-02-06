@@ -27,7 +27,6 @@ type
     KartPrihQueryPOST: TIBStringField;
     KartPrihQueryMONEY: TIBBCDField;
     KartPrihQuerySUM_NDS: TIBBCDField;
-    KartPrihQuerySUMMA: TIBBCDField;
     KartPrihQueryNDS: TIBBCDField;
     KartPrihQueryACCOUNT: TIBStringField;
     ConfigUMC: TRxIBQuery;
@@ -247,6 +246,7 @@ type
     RashSTRUK_ID: TSmallintField;
     KartRashQuerySTRUK_ID: TSmallintField;
     KartRashQueryKLIENT_ID: TIntegerField;
+    KartPrihQuerySUMMA: TFMTBCDField;
     procedure DataModuleDestroy(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
 
@@ -902,8 +902,11 @@ begin
 end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);
+var
+  userName3Char : string;
 begin
   userName := GetCurrentUserName;
+  userName3Char := copy(AnsiLowerCase(userName), 1, 3);
   BELMED.Close;
   BELMED.Params.Clear;
   BELMED.Params.Add('lc_ctype=WIN1251');
@@ -922,7 +925,7 @@ begin
       ShowMessage('” пользовател€ ' + UserName + ' нет доступа к базе данных');
     end;
   end;
-  if (ParamStr(1) = 'PRIH') then
+  if (userName3Char = 'igo') or (userName3Char = 'bm5') or (userName3Char = 'bmg') then
     showPrih := true
   else
     showPrih := false;
