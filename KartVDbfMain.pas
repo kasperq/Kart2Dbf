@@ -742,6 +742,7 @@ procedure TKartVDbfForm.FormShow(Sender: TObject);
 var
   year, month, day : word;
 begin
+  prihCopyBtn.Visible := DM.showPrih;  
   DecodeDate(Now, year, month, day);
   if (month = 1) then
   begin

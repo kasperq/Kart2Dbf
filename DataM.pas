@@ -246,6 +246,7 @@ type
     ConfigUMCSTKODRELA: TIBStringField;
     RashSTRUK_ID: TSmallintField;
     KartRashQuerySTRUK_ID: TSmallintField;
+    KartRashQueryKLIENT_ID: TIntegerField;
     procedure DataModuleDestroy(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
 
@@ -302,6 +303,7 @@ type
     var
       filterMonth, filterGod, filterStrukId : integer;
       userName : string;
+      showPrih : boolean;
 
   end;
 
@@ -901,7 +903,7 @@ end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);
 begin
-  userName := GetCurrentUserName;    
+  userName := GetCurrentUserName;
   BELMED.Close;
   BELMED.Params.Clear;
   BELMED.Params.Add('lc_ctype=WIN1251');
@@ -920,7 +922,10 @@ begin
       ShowMessage('” пользовател€ ' + UserName + ' нет доступа к базе данных');
     end;
   end;
-
+  if (ParamStr(1) = 'PRIH') then
+    showPrih := true
+  else
+    showPrih := false;
   new(log);
 end;
 

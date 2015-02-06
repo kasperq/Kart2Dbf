@@ -1,14 +1,16 @@
 object KartVDbfForm: TKartVDbfForm
   Left = 197
   Top = 111
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = #1044#1086#1079#1072#1087#1080#1089#1100' '#1076#1074#1080#1078#1077#1085#1080#1103
-  ClientHeight = 399
-  ClientWidth = 457
+  ClientHeight = 409
+  ClientWidth = 467
   Color = clBtnFace
-  Constraints.MaxHeight = 500
-  Constraints.MaxWidth = 465
-  Constraints.MinHeight = 385
-  Constraints.MinWidth = 465
+  Constraints.MaxHeight = 438
+  Constraints.MaxWidth = 473
+  Constraints.MinHeight = 438
+  Constraints.MinWidth = 473
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
@@ -22,7 +24,6 @@ object KartVDbfForm: TKartVDbfForm
   PixelsPerInch = 96
   TextHeight = 16
   GlassFrame.Bottom = 20
-  GlassFrame.Enabled = True
   GlassFrame.Left = 20
   GlassFrame.Right = 20
   GlassFrame.Top = 20
@@ -2148,19 +2149,18 @@ object KartVDbfForm: TKartVDbfForm
     Left = 66
     Top = 144
     Width = 320
-    Height = 129
-    Caption = #1044#1086#1079#1072#1087#1080#1089#1072#1090#1100' '#1088#1072#1089#1093#1086#1076#1099
+    Height = 81
+    Caption = #1044#1086#1079#1072#1087#1080#1089#1072#1090#1100' '#1056#1040#1057#1061#1054#1044#1067
     WordWrap = True
     OnClick = rashCopyBtnClick
   end
   object prihCopyBtn: TRxSpeedButton
     Left = 66
-    Top = 273
+    Top = 231
     Width = 320
-    Height = 25
-    Caption = #1044#1086#1079#1072#1087#1080#1089#1072#1090#1100' '#1087#1088#1080#1093#1086#1076#1099
+    Height = 67
+    Caption = #1044#1086#1079#1072#1087#1080#1089#1072#1090#1100' '#1055#1056#1048#1061#1054#1044#1067
     WordWrap = True
-    Visible = False
     OnClick = prihCopyBtnClick
   end
   object buxNameCombo: TComboBox
@@ -2331,7 +2331,6 @@ object KartVDbfForm: TKartVDbfForm
     Height = 25
     Caption = #1056#1072#1089#1093#1086#1076#1099' '#1073#1072#1079#1072
     TabOrder = 9
-    Visible = False
     OnClick = Button5Click
   end
   object lastNeobrRashBtn: TButton

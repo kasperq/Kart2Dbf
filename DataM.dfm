@@ -78,9 +78,8 @@ object DM: TDM
         '--left join document doc_osn on document.dok_osn_id = doc_osn.do' +
         'c_id'
       '--  and doc_osn.tip_op_id = 1 and doc_osn.tip_dok_id = 4'
-      
-        'left join tip_oper on tip_oper.tip_op_id = document.tip_op_id an' +
-        'd tip_oper.gr_op_id = 1'
+      'left join tip_oper on tip_oper.tip_op_id = document.tip_op_id '
+      '                          and tip_oper.gr_op_id = 1'
       'left join tipdok on tipdok.tip_dok_id = document.tip_dok_id'
       
         'left join struk relaStr on relaStr.struk_id = configumc.rela_str' +
@@ -90,7 +89,9 @@ object DM: TDM
       'and document.struk_id = :struk_id '
       'and document.priz_id > 1'
       'and extract(month from document.date_op) = :mes'
-      'and extract(year from document.date_op) = :god')
+      'and extract(year from document.date_op) = :god'
+      ' and document.tip_op_id = 1'
+      'and document.tip_dok_id = 195')
     Macros = <>
     Left = 128
     Top = 8
@@ -418,7 +419,8 @@ object DM: TDM
         'char_length(kart.stroka_id)) np,'
       
         'tip_oper.nam_op, tip_oper.tip_op_id, document.priz_id, document.' +
-        'doc_id, document.struk_id'
+        'doc_id, document.struk_id,'
+      'document.klient_id'
       ''
       'from document'
       ''
@@ -442,7 +444,7 @@ object DM: TDM
       ''
       'where kart.kol_rash <> 0 and matrop.account <> '#39'01'#39
       'and document.struk_id = :struk_id'
-      'and document.priz_id > 1'
+      '--and document.priz_id > 1'
       'and extract(month from document.date_op) = :mes'
       'and extract(year from document.date_op) = :god'
       'and document.tip_op_id <> 93')
@@ -618,6 +620,11 @@ object DM: TDM
       Origin = '"DOCUMENT"."STRUK_ID"'
       Required = True
     end
+    object KartRashQueryKLIENT_ID: TIntegerField
+      FieldName = 'KLIENT_ID'
+      Origin = '"DOCUMENT"."KLIENT_ID"'
+      Required = True
+    end
   end
   object DSKartOutlay: TDataSource
     DataSet = KartRashQuery
@@ -637,7 +644,7 @@ object DM: TDM
     Top = 112
   end
   object frxReport1: TfrxReport
-    Version = '4.7.109'
+    Version = '4.9.32'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick]
@@ -1243,6 +1250,8 @@ object DM: TDM
     Creator = 'FastReport'
     EmptyLines = True
     SuppressPageHeadersFooters = False
+    RowsCount = 0
+    Split = ssNotSplit
     Left = 696
     Top = 320
   end
