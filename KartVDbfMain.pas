@@ -300,8 +300,8 @@ begin
       if (dm.appendNomen(dm.KartPrihQueryACCOUNT.AsString, dm.KartPrihQueryNUMKSU.AsString,
                          dm.KartPrihQueryNAMEPR.AsString, dm.KartPrihQueryNAMEPRS.AsString,
                          dm.KartPrihQueryXARKT.AsString, dm.KartPrihQueryGOST.AsString,
-                         dm.KartPrihQueryMEI.AsString, dm.KartPrihQuerySKLAD.AsString,
-                         dm.KartPrihQueryEIZ.AsString, dm.KartPrihQueryDATETR.AsDateTime)) then
+                         dm.KartPrihQueryEIZ.AsString, dm.KartPrihQuerySKLAD.AsString,
+                         dm.KartPrihQueryMEI.AsString, dm.KartPrihQueryDATETR.AsDateTime)) then
         addKartRec2NomenDbf := addKartRec2NomenDbf(kartType, numkcu, sklad, bals);
     if (kartType = 'RASX') then
       if (dm.appendNomen(dm.KartRashQueryACCOUNT.AsString, dm.KartRashQueryNUMKSU.AsString,
@@ -500,7 +500,7 @@ begin
   dm.PrihPOST.AsString := dm.KartPrihQueryPOST.AsString;
   dm.PrihNP.AsString := dm.KartPrihQueryNP.AsString;
   dm.PrihMONEY.AsString := dm.KartPrihQueryMONEY.AsString;
-  dm.PrihSUMNDS.AsString := dm.KartPrihQuerySUM_NDS.AsString;
+//  dm.PrihSUMNDS.AsString := dm.KartPrihQuerySUM_NDS.AsString;
   dm.PrihSUM.AsString := dm.KartPrihQuerySUMMA.AsString;
   dm.PrihKPZ.AsString := '';
   dm.PrihREGNSF.AsString := '1';

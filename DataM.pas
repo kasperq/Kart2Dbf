@@ -190,7 +190,6 @@ type
     PrihKORR: TStringField;
     PrihWW1: TStringField;
     PrihSUMD: TFloatField;
-    PrihSUMNDS: TFloatField;
     PrihDOC_ID: TFloatField;
     WorkSession: TSession;
     LogQuery: TRxIBQuery;
@@ -427,12 +426,13 @@ end;
 
 function TDM.editNomenRec(kartType, mes, god, buxName: string; kol, summa, sumSNds : double) : boolean;
 var
-  znak : integer;
+  znak, znakVosst : integer;
 begin
   result := false;
   if (NomenMem.Active) then
   begin
     znak := 0;
+    znakVosst := 1;
     if (kartType = 'RASX') then    // если добавляем расходы в номен
       znak := -1;               // чтобы знак был -
     if (kartType = 'PRIX') then    // если добавляем приходы в номен
@@ -441,11 +441,13 @@ begin
     begin
       kartType := 'RASX';
       znak := 1;
+      znakVosst := -1;
     end;
     if (kartType = 'PRIXR') then
     begin
       kartType := 'PRIX';
       znak := -1;
+      znakVosst := -1;
     end;
 
     try
@@ -460,11 +462,11 @@ begin
                                                 + znak * sumSNds;
 
         NomenMem.FieldByName(kartType + 'ODM').AsFloat := NomenMem.FieldByName(kartType + 'ODM').AsFloat  // кол-во приходов/расходов PRIXODM/RASXODM за месяц
-                                                          + kol * (-znak);
+                                                          + kol * znakVosst;
         NomenMem.FieldByName('S' + kartType + 'M').AsFloat := NomenMem.FieldByName('S' + kartType + 'M').AsFloat    // сумма расходов за месяц
-                                                              + summa * (-znak);
+                                                              + summa * znakVosst;
         NomenMem.FieldByName('S' + kartType + 'MD').AsFloat := NomenMem.FieldByName('S' + kartType + 'MD').AsFloat    // сумма расходов с ндс
-                                                               + sumSNds * (-znak);
+                                                               + sumSNds * znakVosst;
 
         if (NomenMem.FieldByName('KOL').AsFloat <> 0) then
         begin
@@ -569,13 +571,13 @@ begin
                             + 'prixod.dbf"."SUM", KPZ, REGNSF, KOLNEDN, KOLNEDS, '
                             + 'KOLMATPUT, SUMNEDN, SUMNEDS, SUMMATP, SKLAD, DEBDOP, '
                             + 'KRDOP, PRIZVX, PRIZN, KREG, NP, KORR, WW1, SUMD, '
-                            + 'SUMNDS, DOC_ID) values '
+                            + 'DOC_ID) values '
                             + '(:BALS, :NUMKCU, :NAMEPR, :MEI, :EIZ, :OPER, :DATETR, '
                             + ':NUMDOK, :NSD, :DATSD, :KP, :POST, :KOL, :KOLOTG, '
                             + ':MONEY, :SUM, :KPZ, :REGNSF, :KOLNEDN, :KOLNEDS, '
                             + ':KOLMATPUT, :SUMNEDN, :SUMNEDS, :SUMMATP, :SKLAD, '
                             + ':DEBDOP, :KRDOP, :PRIZVX, :PRIZN, :KREG, :NP, :KORR, '
-                            + ':WW1, :SUMD, :SUMNDS, :DOC_ID) ';
+                            + ':WW1, :SUMD, :DOC_ID) ';
   UpdPrih.DeleteSQL.Text := 'delete from "' + AnsiLowerCase(localPath) + 'prixod.dbf" '
                             + 'where BALS = :OLD_BALS and NUMKCU = :OLD_NUMKCU and '
                             + 'NP = :OLD_NP and DOC_ID = :OLD_DOC_ID ';
@@ -591,7 +593,7 @@ begin
                             + 'SUMNEDN = :SUMNEDN, SUMNEDS = :SUMNEDS, SUMMATP = :SUMMATP, '
                             + 'SKLAD = :SKLAD, DEBDOP = :DEBDOP, KRDOP = :KRDOP, '
                             + 'PRIZVX = :PRIZVX, PRIZN = :PRIZN, KREG = :KREG, NP = :NP, '
-                            + 'KORR = :KORR, WW1 = :WW1, SUMD = :SUMD, SUMNDS = :SUMNDS, '
+                            + 'KORR = :KORR, WW1 = :WW1, SUMD = :SUMD,  '
                             + 'DOC_ID = :DOC_ID where BALS = :OLD_BALS and '
                             + 'NUMKCU = :OLD_NUMKCU and NP = :OLD_NP and DOC_ID = :OLD_DOC_ID';
   Prih.Open;

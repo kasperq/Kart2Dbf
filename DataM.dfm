@@ -1981,9 +1981,6 @@ object DM: TDM
     object PrihSUMD: TFloatField
       FieldName = 'SUMD'
     end
-    object PrihSUMNDS: TFloatField
-      FieldName = 'SUMNDS'
-    end
     object PrihDOC_ID: TFloatField
       FieldName = 'DOC_ID'
     end
