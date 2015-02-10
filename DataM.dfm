@@ -437,9 +437,7 @@ object DM: TDM
       'inner join configumc on document.struk_id = configumc.struk_id'
       'left join ostatki on kart.kart_id = ostatki.kart_id'
       'left join seria on ostatki.seria_id = seria.seria_id'
-      
-        'left join tip_oper on tip_oper.tip_op_id = document.tip_op_id an' +
-        'd tip_oper.gr_op_id = 2'
+      'left join tip_oper on tip_oper.tip_op_id = document.tip_op_id'
       
         'left join struk relaStr on relaStr.struk_id = configumc.rela_str' +
         'uk_id'
@@ -449,8 +447,15 @@ object DM: TDM
       '--and document.priz_id > 1'
       'and extract(month from document.date_op) = :mes'
       'and extract(year from document.date_op) = :god'
-      'and document.tip_op_id <> 93')
-    Macros = <>
+      'and document.tip_op_id <> 93'
+      'and %usl')
+    Macros = <
+      item
+        DataType = ftString
+        Name = 'usl'
+        ParamType = ptInput
+        Value = '0=0'
+      end>
     Left = 320
     Top = 8
     ParamData = <

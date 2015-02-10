@@ -29,6 +29,7 @@ type
     prihCopyBtn: TRxSpeedButton;
     strkCombo: TComboBox;
     neobrRashBtn: TButton;
+    cb_vxControl: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure curMonthComboChange(Sender: TObject);
     procedure curMonthEditChange(Sender: TObject);
@@ -47,6 +48,7 @@ type
     procedure neobrRashBtnClick(Sender: TObject);
     procedure buxNameComboChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure cb_vxControlClick(Sender: TObject);
 
   private
     procedure copyKartVDbf(copyObjects : word; sender : string);   // 0 - all; 1 - prih; 2 - rash
@@ -148,6 +150,11 @@ begin
                   + '_' + curMonthEdit.Text + '_' + getCurrentDateTimeString() + '\';
   oldFilePath := dm.diskPath + buxNameCombo.Text + '\zerno1\';
   newFilePath := dm.diskPath + buxNameCombo.Text + '\zerno1\' + getCurrentDateTimeString() + '\';
+end;
+
+procedure TKartVDbfForm.cb_vxControlClick(Sender: TObject);
+begin
+  dm.setVxodControlRashQuery(cb_vxControl.Checked);  
 end;
 
 function TKartVDbfForm.copyDbfToLocalDir() : boolean;
@@ -742,7 +749,8 @@ procedure TKartVDbfForm.FormShow(Sender: TObject);
 var
   year, month, day : word;
 begin
-  prihCopyBtn.Visible := DM.showPrih;  
+  prihCopyBtn.Visible := DM.showPrih;
+  cb_vxControl.Visible := dm.showPrih;
   DecodeDate(Now, year, month, day);
   if (month = 1) then
   begin
@@ -761,6 +769,7 @@ begin
   fillStrkCombo;
 //  dm.diskPath := 'd';
   dm.diskPath := 'f';
+  dm.setVxodControlRashQuery(cb_vxControl.Checked);
   setPathStrings;
 end;
 

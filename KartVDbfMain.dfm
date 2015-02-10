@@ -4,10 +4,10 @@ object KartVDbfForm: TKartVDbfForm
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #1044#1086#1079#1072#1087#1080#1089#1100' '#1076#1074#1080#1078#1077#1085#1080#1103
-  ClientHeight = 409
+  ClientHeight = 443
   ClientWidth = 467
   Color = clBtnFace
-  Constraints.MaxHeight = 438
+  Constraints.MaxHeight = 500
   Constraints.MaxWidth = 473
   Constraints.MinHeight = 438
   Constraints.MinWidth = 473
@@ -2336,7 +2336,7 @@ object KartVDbfForm: TKartVDbfForm
   end
   object lastNeobrRashBtn: TButton
     Left = 66
-    Top = 304
+    Top = 356
     Width = 320
     Height = 48
     Caption = #1055#1086#1082#1072#1079#1072#1090#1100' '#1087#1086#1089#1083#1077#1076#1085#1080#1077' '#1085#1077#1086#1073#1088#1072#1073#1086#1090#1072#1085#1085#1099#1077' '#1088#1072#1089#1093#1086#1076#1099' '#1087#1086' '#1087#1086#1076#1088#1072#1079#1076#1077#1083#1077#1085#1080#1102
@@ -2363,11 +2363,20 @@ object KartVDbfForm: TKartVDbfForm
   end
   object neobrRashBtn: TButton
     Left = 66
-    Top = 358
+    Top = 410
     Width = 320
     Height = 25
     Caption = #1055#1086#1082#1072#1079#1072#1090#1100' '#1074#1089#1077' '#1085#1077#1086#1073#1088#1072#1073#1086#1090#1072#1085#1085#1099#1077' '#1088#1072#1089#1093#1086#1076#1099
     TabOrder = 12
     OnClick = neobrRashBtnClick
+  end
+  object cb_vxControl: TCheckBox
+    Left = 148
+    Top = 320
+    Width = 161
+    Height = 17
+    Caption = #1042#1093#1086#1076#1085#1086#1081' '#1082#1086#1085#1090#1088#1086#1083#1100
+    TabOrder = 13
+    OnClick = cb_vxControlClick
   end
 end

@@ -296,6 +296,7 @@ type
     function NomenMemLocate(numkcu, sklad, bals: string) : boolean;
     procedure setLogger(var log : TLogger);
     function checkBuxStruks(strukId : integer; buxName : string) : boolean;
+    procedure setVxodControlRashQuery(setVxContr : boolean);
 
     property diskPath : string read getDiskPath write setDiskLetter;
 
@@ -938,6 +939,123 @@ procedure TDM.DataModuleDestroy(Sender: TObject);
 begin
   BlockSession.Active := false;
   WorkSession.Active := false;
+end;
+
+procedure TDM.setVxodControlRashQuery(setVxContr : boolean);
+begin
+  KartRashQuery.Close;
+  if (setVxContr) then
+  begin
+    KartRashQuery.MacroByName('usl').AsString := 'document.tip_op_id = 135 '
+                                                 + 'and document.tip_dok_id = 125 ' ;
+//    KartRashQuery.SQL.Text := 'select iif(relaStr.stkod is not null, relaStr.stkod, '
+//                              + 'configumc.stkod) sklad, padleft(TRIM(cast(kart.ksm_id as char(5))), 7, ''0'') numksu, '
+//                              + 'matrop.nmat namepr, matrop.nmats nameprs, matrop.xarkt, '
+//                              + 'matrop.gost, '
+//                              + 'cast(iif(document.tip_op_id in (85, 112, 113, 32, 103, 104), '
+//                              + '''p'', iif(document.tip_op_id = 131, ''2'', '
+//                              + 'iif(document.tip_op_id in (8, 9, 110, 140, 11, 147, 78, 10, 105, 93, 135), '
+//                              + '''9'', ''1''))) as char(2)) oper, '
+//                              + 'document.date_op datetr, substring(trim(document.ndok) from 1 for 5)  numndok, '
+//                              + 'cast(iif(document.tip_op_id = 1, document.klient_id, struk.stkod) as char(5)) kp, '
+//                              + 'kart.kol_rash kol, kart.kol_rash kolotg, '
+//                              + 'iif(document.struk_id < 0,cast(kart.kei_id2 as char(4)), cast(matrop.kei_id as char(4))) eiz, '
+//                              + 'ediz.neis mei, iif(document.tip_op_id in (32, 103, 104, 112, 113), '', struk.stkod) cex, '
+//                              + 'iif(document.struk_id in (163, 87), struk.stkod, '
+//                              + 'iif(document.tip_op_id in (32, 103, 104, 112, 113), '
+//                              + 'iif(configumc.struk_id in (542, 543, 544, 545, 546, 708, -540), '
+//                              + '''1600'', configumc.stkod), struk.stname)) post, '
+//                              + 'kart.cena money, iif(document.tip_op_id in (32, 103, 104, 112, 113), '
+//                              + 'iif(kart.sum_nds = 0, kart.summa, kart.sum_nds), '
+//                              + 'kart.sum_nds) sum_nds, kart.summa, document.nds, '
+//                              + 'ostatki.account, '
+//                              + 'cast(iif((kart.dcode is null)  or (kart.dcode = 1) or '
+//                              + '(char_length(rtrim(ltrim(kart.debet))) > 3 '
+//                              + 'and substring(rtrim(ltrim(kart.debet)) from char_length(rtrim(ltrim(kart.debet))) for  1) <> ''/'') , '
+//                              + 'rtrim(ltrim(kart.debet)), '
+//                              + 'iif(substring(rtrim(ltrim(kart.debet)) from char_length(rtrim(ltrim(kart.debet))) for  1) <> ''/'', '
+//                              + 'rtrim(ltrim(kart.debet)) || ''/'' || rtrim(ltrim(kart.dcode)), '
+//                              + 'rtrim(ltrim(kart.debet)) || rtrim(ltrim(kart.dcode)) )) as varchar(5)) as debet, '
+//                              + 'substring(kart.stroka_id from char_length(kart.stroka_id)-3 for char_length(kart.stroka_id)) np, '
+//                              + 'tip_oper.nam_op, tip_oper.tip_op_id, document.priz_id, '
+//                              + 'document.doc_id, document.struk_id, document.klient_id '
+//
+//                              + 'from document '
+//
+//                              + 'inner join kart on document.doc_id = kart.doc_id '
+//                              + 'inner join matrop on kart.ksm_id = matrop.ksm_id '
+//                              + 'inner join ediz on matrop.kei_id = ediz.kei_id '
+//                              + 'left join sprorg on document.klient_id = sprorg.kod '
+//                              + 'left join struk on document.klient_id = struk.struk_id '
+//                              + 'inner join configumc on document.struk_id = configumc.struk_id '
+//                              + 'left join ostatki on kart.kart_id = ostatki.kart_id '
+//                              + 'left join seria on ostatki.seria_id = seria.seria_id '
+//                              + 'left join tip_oper on tip_oper.tip_op_id = document.tip_op_id '
+//                              + 'left join struk relaStr on relaStr.struk_id = configumc.rela_struk_id '
+//
+//                              + 'where kart.kol_rash <> 0 and matrop.account <> ''01'' '
+//                              + 'and document.struk_id = :struk_id '
+//                              + 'and document.tip_op_id = 135 '
+//                              + 'and document.tip_dok_id = 125 '
+//                              + 'and extract(month from document.date_op) = :mes '
+//                              + 'and extract(year from document.date_op) = :god '
+//                              + 'and document.tip_op_id <> 93 ';
+  end
+  else
+  begin
+    KartRashQuery.MacroByName('usl').AsString := 'tip_oper.gr_op_id = 2 ';
+//    KartRashQuery.SQL.Text := 'select iif(relaStr.stkod is not null, relaStr.stkod, '
+//                              + 'configumc.stkod) sklad, padleft(TRIM(cast(kart.ksm_id as char(5))), 7, ''0'') numksu, '
+//                              + 'matrop.nmat namepr, matrop.nmats nameprs, matrop.xarkt, '
+//                              + 'matrop.gost, '
+//                              + 'cast(iif(document.tip_op_id in (85, 112, 113, 32, 103, 104), '
+//                              + '''p'', iif(document.tip_op_id = 131, ''2'', '
+//                              + 'iif(document.tip_op_id in (8, 9, 110, 140, 11, 147, 78, 10, 105, 93, 135), '
+//                              + '''9'', ''1''))) as char(2)) oper, '
+//                              + 'document.date_op datetr, substring(trim(document.ndok) from 1 for 5)  numndok, '
+//                              + 'cast(iif(document.tip_op_id = 1, document.klient_id, struk.stkod) as char(5)) kp, '
+//                              + 'kart.kol_rash kol, kart.kol_rash kolotg, '
+//                              + 'iif(document.struk_id < 0,cast(kart.kei_id2 as char(4)), cast(matrop.kei_id as char(4))) eiz, '
+//                              + 'ediz.neis mei, iif(document.tip_op_id in (32, 103, 104, 112, 113), '', struk.stkod) cex, '
+//                              + 'iif(document.struk_id in (163, 87), struk.stkod, '
+//                              + 'iif(document.tip_op_id in (32, 103, 104, 112, 113), '
+//                              + 'iif(configumc.struk_id in (542, 543, 544, 545, 546, 708, -540), '
+//                              + '''1600'', configumc.stkod), struk.stname)) post, '
+//                              + 'kart.cena money, iif(document.tip_op_id in (32, 103, 104, 112, 113), '
+//                              + 'iif(kart.sum_nds = 0, kart.summa, kart.sum_nds), '
+//                              + 'kart.sum_nds) sum_nds, kart.summa, document.nds, '
+//                              + 'ostatki.account, '
+//                              + 'cast(iif((kart.dcode is null)  or (kart.dcode = 1) or '
+//                              + '(char_length(rtrim(ltrim(kart.debet))) > 3 '
+//                              + 'and substring(rtrim(ltrim(kart.debet)) from char_length(rtrim(ltrim(kart.debet))) for  1) <> ''/'') , '
+//                              + 'rtrim(ltrim(kart.debet)), '
+//                              + 'iif(substring(rtrim(ltrim(kart.debet)) from char_length(rtrim(ltrim(kart.debet))) for  1) <> ''/'', '
+//                              + 'rtrim(ltrim(kart.debet)) || ''/'' || rtrim(ltrim(kart.dcode)), '
+//                              + 'rtrim(ltrim(kart.debet)) || rtrim(ltrim(kart.dcode)) )) as varchar(5)) as debet, '
+//                              + 'substring(kart.stroka_id from char_length(kart.stroka_id)-3 for char_length(kart.stroka_id)) np, '
+//                              + 'tip_oper.nam_op, tip_oper.tip_op_id, document.priz_id, '
+//                              + 'document.doc_id, document.struk_id, document.klient_id '
+//
+//                              + 'from document '
+//
+//                              + 'inner join kart on document.doc_id = kart.doc_id '
+//                              + 'inner join matrop on kart.ksm_id = matrop.ksm_id '
+//                              + 'inner join ediz on matrop.kei_id = ediz.kei_id '
+//                              + 'left join sprorg on document.klient_id = sprorg.kod '
+//                              + 'left join struk on document.klient_id = struk.struk_id '
+//                              + 'inner join configumc on document.struk_id = configumc.struk_id '
+//                              + 'left join ostatki on kart.kart_id = ostatki.kart_id '
+//                              + 'left join seria on ostatki.seria_id = seria.seria_id '
+//                              + 'left join tip_oper on tip_oper.tip_op_id = document.tip_op_id and tip_oper.gr_op_id = 2 '
+//                              + 'left join struk relaStr on relaStr.struk_id = configumc.rela_struk_id '
+//
+//                              + 'where kart.kol_rash <> 0 and matrop.account <> ''01'' '
+//                              + 'and document.struk_id = :struk_id '
+//
+//                              + 'and extract(month from document.date_op) = :mes '
+//                              + 'and extract(year from document.date_op) = :god '
+//                              + 'and document.tip_op_id <> 93 ';
+  end;
 end;
 
 end.
