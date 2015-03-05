@@ -38,7 +38,7 @@ object DM: TDM
       
         'matrop.nmat namepr, matrop.nmats nameprs, matrop.xarkt, matrop.g' +
         'ost,'
-      'cast(iif(document.tip_op_id = 6, '#39'1'#39', '#39'9'#39') as char(2)) oper,'
+      'cast(iif(document.tip_op_id = 6, '#39'9'#39', '#39'1'#39') as char(2)) oper,'
       'document.date_op datetr,'
       'substring(trim(document.ndok) from 1 for 5)  numndok, '
       'substring(trim(docosn.ndok) from 1 for 10) nsd,'
@@ -92,7 +92,7 @@ object DM: TDM
       'and document.priz_id > 1'
       'and extract(month from document.date_op) = :mes'
       'and extract(year from document.date_op) = :god'
-      ' and document.tip_op_id = 1'
+      ' and document.tip_op_id = 6'
       'and document.tip_dok_id = 195')
     Macros = <>
     Left = 128
@@ -444,7 +444,7 @@ object DM: TDM
       ''
       'where kart.kol_rash <> 0 and matrop.account <> '#39'01'#39
       'and document.struk_id = :struk_id'
-      '--and document.priz_id > 1'
+      'and document.priz_id > 1'
       'and extract(month from document.date_op) = :mes'
       'and extract(year from document.date_op) = :god'
       'and document.tip_op_id <> 93'
