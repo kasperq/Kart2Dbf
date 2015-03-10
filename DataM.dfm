@@ -402,20 +402,39 @@ object DM: TDM
         'cast(iif((kart.dcode is null)  or (kart.dcode = 1) or (char_leng' +
         'th(rtrim(ltrim(kart.debet))) > 3'
       
-        '          and substring(rtrim(ltrim(kart.debet)) from char_lengt' +
-        'h(rtrim(ltrim(kart.debet))) for  1) <> '#39'/'#39') ,'
-      '          rtrim(ltrim(kart.debet)),'
+        '                                                       and subst' +
+        'ring(rtrim(ltrim(kart.debet))'
       
-        '          iif(substring(rtrim(ltrim(kart.debet)) from char_lengt' +
-        'h(rtrim(ltrim(kart.debet))) for  1) <> '#39'/'#39','
+        '                                                                ' +
+        '     from iif(char_length(rtrim(ltrim(kart.debet)))>0,'
       
-        '              rtrim(ltrim(kart.debet)) || '#39'/'#39' || rtrim(ltrim(kar' +
-        't.dcode)),'
+        '                                                                ' +
+        '                char_length(rtrim(ltrim(kart.debet))),'
       
-        '              rtrim(ltrim(kart.debet)) || rtrim(ltrim(kart.dcode' +
-        '))'
-      '              )'
-      '         ) as varchar(5)) as debet,'
+        '                                                                ' +
+        '                1)'
+      
+        '                                                                ' +
+        '     for  1) <> '#39'/'#39') ,'
+      '            rtrim(ltrim(kart.debet)),'
+      
+        '            iif(substring(rtrim(ltrim(kart.debet)) from iif(char' +
+        '_length(rtrim(ltrim(kart.debet)))>0,'
+      
+        '                                                              ch' +
+        'ar_length(rtrim(ltrim(kart.debet))),'
+      
+        '                                                              1)' +
+        ' for  1) <> '#39'/'#39','
+      '                 iif(char_length(rtrim(ltrim(kart.debet)))>0,'
+      '                       rtrim(ltrim(kart.debet)),'
+      '                       '#39'25'#39') || '#39'/'#39' || rtrim(ltrim(kart.dcode)),'
+      
+        '                 rtrim(ltrim(kart.debet)) || rtrim(ltrim(kart.dc' +
+        'ode))'
+      '                )'
+      '         )'
+      '     as varchar(5)) as debet,'
       
         'substring(kart.stroka_id from char_length(kart.stroka_id)-3 for ' +
         'char_length(kart.stroka_id)) np,'
