@@ -948,7 +948,8 @@ begin
     KartRashQuery.MacroByName('usl').AsString := 'document.tip_op_id = 135 '
                                                  + 'and document.tip_dok_id = 125 '
   else
-    KartRashQuery.MacroByName('usl').AsString := 'tip_oper.gr_op_id = 2 and tip_oper.tip_op_id <> 135 ';
+    KartRashQuery.MacroByName('usl').AsString := 'tip_oper.gr_op_id = 2 and tip_oper.tip_op_id <> 135 '
+                                                 + ' and tip_oper.tip_op_id <> 153 ';
 end;
 
 end.
