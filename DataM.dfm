@@ -58,8 +58,8 @@ object DM: TDM
         'substring(kart.stroka_id from char_length(kart.stroka_id)-3 for ' +
         'char_length(kart.stroka_id)) np, '
       
-        'coalesce(kart.cena, 0) money,  kart.sum_nds, cast(kart.summa + c' +
-        'oalesce(kart.dop_rash,0) as numeric(15,6)) as summa,'
+        'coalesce(kart.cena, 0) money,  kart.sum_nds, cast(kart.summa as ' +
+        'numeric(15,6)) as summa,'
       'kart.summa_s_nds,'
       
         'document.nds, ostatki.account, tip_oper.nam_op, tipdok.short_nam' +

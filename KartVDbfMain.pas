@@ -154,6 +154,7 @@ end;
 
 procedure TKartVDbfForm.cb_vxControlClick(Sender: TObject);
 begin
+  log.appendMsg('¬ходной контроль');
   dm.setVxodControlRashQuery(cb_vxControl.Checked);  
 end;
 

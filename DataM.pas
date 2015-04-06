@@ -692,7 +692,14 @@ begin
 end;
 
 procedure TDM.openWorkSession;
+var
+  StrLangDriver : TStringList;
 begin
+  StrLangDriver := TStringList.Create;
+  StrLangDriver.Add('LANGDRIVER=db866ru0');
+  StrLangDriver.Add('LEVEL=4');
+  WorkSession.ModifyDriver('DBASE', StrLangDriver);
+  StrLangDriver.Free;
   if (not WorkSession.Active) then
   begin
     WorkSession.NetFileDir := 'C:\WORK';
@@ -702,7 +709,14 @@ begin
 end;
 
 procedure TDM.openBlockSession(path : string);
+var
+  StrLangDriver : TStringList;
 begin
+  StrLangDriver := TStringList.Create;
+  StrLangDriver.Add('LANGDRIVER=db866ru0');
+  StrLangDriver.Add('LEVEL=4');
+  BlockSession.ModifyDriver('DBASE', StrLangDriver);
+  StrLangDriver.Free;
   if (not BlockSession.Active) and (BlockSession.NetFileDir <> path) then
   begin
     BlockSession.NetFileDir := path;
