@@ -539,7 +539,8 @@ begin
   dm.RashSUM.AsString := dm.KartRashQuerySUMMA.AsString;
   dm.RashCEX.AsString := dm.KartRashQueryCEX.AsString;
   dm.RashDOC_ID.AsString := dm.KartRashQueryDOC_ID.AsString;
-  if (dm.ConfigUMCSTKODRELA.AsString = '1600') then  
+  if (dm.ConfigUMCSTKODRELA.AsString <> dm.ConfigUMCSTKOD.AsString)
+     or (dm.ConfigUMCSTKOD.AsString = '1600') or (dm.ConfigUMCSTKOD.AsString = '4300') then
 	  dm.RashSTRUK_ID.AsString := dm.KartRashQuerySTRUK_ID.AsString;
   dm.Rash.Post;
 end;
@@ -551,6 +552,7 @@ end;
 
 procedure TKartVDbfForm.copyKartVDbf(copyObjects : word; sender : string);   // 0 - all; 1 - prih; 2 - rash
 begin
+  dm.openWorkSession;
   dm.setLogger(log);
   log.startLogging(buxNameCombo.Text, sender, dm.ConfigUMCSTKOD.AsString,
                    dm.ConfigUMCSTRUK_ID.AsInteger, curMonthEdit.Value, curYearEdit.Value);
@@ -634,7 +636,8 @@ end;
 procedure TKartVDbfForm.copyRash(copyObjects : integer);
 begin
   log.appendMsg('Начинаем копирование расходов.');
-  dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString, dm.ConfigUMCSTRUK_ID.AsString);
+  dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
+                      dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString);
   dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true);
   dm.restoreNomenForRash(curMonth, curYear, buxNameCombo.Text);
   dm.clearRash;

@@ -255,13 +255,13 @@ type
     procedure NomenMemEditNewRecord;
 
     procedure openBlockSession(path : string);
-    procedure openWorkSession;
 
     var
       m_diskPath : string;
       log : ^TLogger;
 
   public
+    procedure openWorkSession;
     procedure openNesootvTbl(buxName : string; month, year, strukId : integer);
     procedure saveNesootvTbl;
     procedure clearNesootvTbl;
@@ -284,7 +284,7 @@ type
     procedure openMaxRegnsfPrih(localPath, stkod : string);
 
     procedure openRashOldDbf(localPath : string; exclusive : boolean);
-    procedure openRashDbfQuery(localPath, stkod, strukId : string);
+    procedure openRashDbfQuery(localPath, stkodRela, strukId, stkod : string);
     procedure activateRashDbf(localPath, stkod : string; exclusive : boolean);
     procedure activateKartRashQuery(curMonth : integer; curYear : integer);
     procedure clearRash;
@@ -539,7 +539,6 @@ end;
 
 procedure TDM.activatePrihDbf(localPath, stkod : string; exclusive : boolean);
 begin
-  openWorkSession;
   PrihDbf.Close;
   PrihDbf.Exclusive := exclusive;
   PrihDbf.TableName := AnsiLowerCase(localPath) + '\prixod.dbf';
@@ -561,7 +560,6 @@ end;
 
 procedure TDM.openPrihDbfQuery(localPath, stkod : string);
 begin
-  openWorkSession;
   Prih.Close;
   Prih.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'prixod.dbf" prixod '
                         + 'where prixod.doc_id <> 0 and prixod.sklad = "' + stkod + '" ';
@@ -603,7 +601,6 @@ end;
 
 procedure TDM.activateRashDbf(localPath, stkod : string; exclusive : boolean);
 begin
-  openWorkSession;
   RashDbf.Close;
   RashDbf.Exclusive := exclusive;
   RashDbf.DatabaseName := '';
@@ -615,13 +612,12 @@ begin
   RashDbf.Last;
 end;
 
-procedure TDM.openRashDbfQuery(localPath, stkod, strukId : string);
+procedure TDM.openRashDbfQuery(localPath, stkodRela, strukId, stkod : string);
 begin
-  openWorkSession;
   Rash.Close;
   Rash.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" rasxod '
-                        + 'where rasxod.doc_id <> 0 and rasxod.sklad = "' + stkod + '" ';
-  if (stkod = '1600') then
+                        + 'where rasxod.doc_id <> 0 and rasxod.sklad = "' + stkodRela + '" ';
+  if (stkodRela <> stkod) or (stkod = '1600') or (stkod = '4300') then
   	Rash.EhSQL.Text := Rash.EhSQL.Text + ' and rasxod.struk_id = "' + strukId + '" ';
   UpdRash.InsertSQL.Text := 'insert into "' + AnsiLowerCase(localPath) + 'rasxod.dbf" '
                             + '(DEBET, BALS, NUMKCU, NAMEPR, KEI, EIZ, OPER, DATETR, '
@@ -657,7 +653,6 @@ end;
 
 procedure TDM.activateNomenDbf(localPath, stkod : string; exclusive : boolean);
 begin
-  openWorkSession;
   Nomen.Close;
   Nomen.Exclusive := exclusive;
   Nomen.DatabaseName := '';
@@ -695,6 +690,8 @@ procedure TDM.openWorkSession;
 var
   StrLangDriver : TStringList;
 begin
+  WorkSession.NetFileDir := 'C:\WORK';
+  WorkSession.PrivateDir := 'C:\WORK';
   StrLangDriver := TStringList.Create;
   StrLangDriver.Add('LANGDRIVER=db866ru0');
   StrLangDriver.Add('LEVEL=4');
@@ -709,14 +706,7 @@ begin
 end;
 
 procedure TDM.openBlockSession(path : string);
-var
-  StrLangDriver : TStringList;
 begin
-  StrLangDriver := TStringList.Create;
-  StrLangDriver.Add('LANGDRIVER=db866ru0');
-  StrLangDriver.Add('LEVEL=4');
-  BlockSession.ModifyDriver('DBASE', StrLangDriver);
-  StrLangDriver.Free;
   if (not BlockSession.Active) and (BlockSession.NetFileDir <> path) then
   begin
     BlockSession.NetFileDir := path;
