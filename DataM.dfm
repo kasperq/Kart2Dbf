@@ -1301,111 +1301,6 @@ object DM: TDM
     Left = 696
     Top = 368
   end
-  object NomenMem: TRxMemoryData
-    Filtered = True
-    FieldDefs = <>
-    Left = 128
-    Top = 112
-    object NomenMemBALS: TStringField
-      FieldName = 'BALS'
-      Size = 5
-    end
-    object NomenMemNUMKCU: TStringField
-      FieldName = 'NUMKCU'
-      Size = 7
-    end
-    object NomenMemNAMEPR: TStringField
-      FieldName = 'NAMEPR'
-      Size = 40
-    end
-    object NomenMemNAMEPRS: TStringField
-      FieldName = 'NAMEPRS'
-      Size = 25
-    end
-    object NomenMemXARKT: TStringField
-      FieldName = 'XARKT'
-      Size = 10
-    end
-    object NomenMemGOST: TStringField
-      FieldName = 'GOST'
-    end
-    object NomenMemMONEY: TFloatField
-      FieldName = 'MONEY'
-    end
-    object NomenMemKEI: TStringField
-      FieldName = 'KEI'
-      Size = 4
-    end
-    object NomenMemEIP: TStringField
-      FieldName = 'EIP'
-      Size = 10
-    end
-    object NomenMemDATEIN: TDateField
-      FieldName = 'DATEIN'
-    end
-    object NomenMemNZ: TFloatField
-      FieldName = 'NZ'
-    end
-    object NomenMemTPR: TStringField
-      FieldName = 'TPR'
-      Size = 1
-    end
-    object NomenMemKOL: TFloatField
-      FieldName = 'KOL'
-    end
-    object NomenMemSUM: TFloatField
-      FieldName = 'SUM'
-    end
-    object NomenMemPRIXODM: TFloatField
-      FieldName = 'PRIXODM'
-    end
-    object NomenMemRASXODM: TFloatField
-      FieldName = 'RASXODM'
-    end
-    object NomenMemSRASXM: TFloatField
-      FieldName = 'SRASXM'
-    end
-    object NomenMemSPRIXM: TFloatField
-      FieldName = 'SPRIXM'
-    end
-    object NomenMemDATETR: TDateField
-      FieldName = 'DATETR'
-    end
-    object NomenMemSKLAD: TStringField
-      FieldName = 'SKLAD'
-      Size = 4
-    end
-    object NomenMemEDNOR: TSmallintField
-      FieldName = 'EDNOR'
-    end
-    object NomenMemSSUM: TFloatField
-      FieldName = 'SSUM'
-    end
-    object NomenMemNSUM: TFloatField
-      FieldName = 'NSUM'
-    end
-    object NomenMemSKOL: TFloatField
-      FieldName = 'SKOL'
-    end
-    object NomenMemCENAD: TFloatField
-      FieldName = 'CENAD'
-    end
-    object NomenMemSUMD: TFloatField
-      FieldName = 'SUMD'
-    end
-    object NomenMemSSUMD: TFloatField
-      FieldName = 'SSUMD'
-    end
-    object NomenMemSPRIXMD: TFloatField
-      FieldName = 'SPRIXMD'
-    end
-    object NomenMemSUMNDS: TFloatField
-      FieldName = 'SUMNDS'
-    end
-    object NomenMemSRASXMD: TFloatField
-      FieldName = 'SRASXMD'
-    end
-  end
   object NomenOld: TTable
     CachedUpdates = True
     SessionName = 'BlockSession'
@@ -2287,5 +2182,130 @@ object DM: TDM
     SessionName = 'BMOMTSSess'
     Left = 432
     Top = 264
+  end
+  object NomenMem: TkbmMemTable
+    DesignActivation = True
+    AttachedAutoRefresh = True
+    AttachMaxCount = 1
+    FieldDefs = <>
+    IndexDefs = <>
+    SortOptions = []
+    AllDataOptions = [mtfSaveData, mtfSaveNonVisible, mtfSaveBlobs, mtfSaveFiltered, mtfSaveIgnoreRange, mtfSaveIgnoreMasterDetail, mtfSaveDeltas]
+    CommaTextOptions = [mtfSaveData]
+    CSVQuote = '"'
+    CSVFieldDelimiter = ','
+    CSVRecordDelimiter = ','
+    CSVTrueString = 'True'
+    CSVFalseString = 'False'
+    PersistentSaveOptions = [mtfSaveData, mtfSaveNonVisible, mtfSaveIgnoreRange, mtfSaveIgnoreMasterDetail]
+    PersistentBackup = False
+    ProgressFlags = [mtpcLoad, mtpcSave, mtpcCopy]
+    FilterOptions = []
+    Version = '2.53g'
+    LanguageID = 0
+    SortID = 0
+    SubLanguageID = 1
+    LocaleID = 1024
+    Left = 200
+    Top = 112
+    object NomenMemBALS: TStringField
+      FieldName = 'BALS'
+      Size = 5
+    end
+    object NomenMemNUMKCU: TStringField
+      FieldName = 'NUMKCU'
+      Size = 7
+    end
+    object NomenMemNAMEPR: TStringField
+      FieldName = 'NAMEPR'
+      Size = 40
+    end
+    object NomenMemNAMEPRS: TStringField
+      FieldName = 'NAMEPRS'
+      Size = 25
+    end
+    object NomenMemXARKT: TStringField
+      FieldName = 'XARKT'
+      Size = 10
+    end
+    object NomenMemGOST: TStringField
+      FieldName = 'GOST'
+    end
+    object NomenMemMONEY: TFloatField
+      FieldName = 'MONEY'
+    end
+    object NomenMemKEI: TStringField
+      FieldName = 'KEI'
+      Size = 4
+    end
+    object NomenMemEIP: TStringField
+      FieldName = 'EIP'
+      Size = 10
+    end
+    object NomenMemDATEIN: TDateField
+      FieldName = 'DATEIN'
+    end
+    object NomenMemNZ: TFloatField
+      FieldName = 'NZ'
+    end
+    object NomenMemTPR: TStringField
+      FieldName = 'TPR'
+      Size = 1
+    end
+    object NomenMemKOL: TFloatField
+      FieldName = 'KOL'
+    end
+    object NomenMemSUM: TFloatField
+      FieldName = 'SUM'
+    end
+    object NomenMemPRIXODM: TFloatField
+      FieldName = 'PRIXODM'
+    end
+    object NomenMemRASXODM: TFloatField
+      FieldName = 'RASXODM'
+    end
+    object NomenMemSRASXM: TFloatField
+      FieldName = 'SRASXM'
+    end
+    object NomenMemSPRIXM: TFloatField
+      FieldName = 'SPRIXM'
+    end
+    object NomenMemDATETR: TDateField
+      FieldName = 'DATETR'
+    end
+    object NomenMemSKLAD: TStringField
+      FieldName = 'SKLAD'
+      Size = 4
+    end
+    object NomenMemEDNOR: TSmallintField
+      FieldName = 'EDNOR'
+    end
+    object NomenMemSSUM: TFloatField
+      FieldName = 'SSUM'
+    end
+    object NomenMemNSUM: TFloatField
+      FieldName = 'NSUM'
+    end
+    object NomenMemSKOL: TFloatField
+      FieldName = 'SKOL'
+    end
+    object NomenMemCENAD: TFloatField
+      FieldName = 'CENAD'
+    end
+    object NomenMemSUMD: TFloatField
+      FieldName = 'SUMD'
+    end
+    object NomenMemSSUMD: TFloatField
+      FieldName = 'SSUMD'
+    end
+    object NomenMemSPRIXMD: TFloatField
+      FieldName = 'SPRIXMD'
+    end
+    object NomenMemSUMNDS: TFloatField
+      FieldName = 'SUMNDS'
+    end
+    object NomenMemSRASXMD: TFloatField
+      FieldName = 'SRASXMD'
+    end
   end
 end

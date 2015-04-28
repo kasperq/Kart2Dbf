@@ -7,7 +7,7 @@ uses
   DBTables, RxQuery, ERxQuery, RxMemDS, frxDCtrl, frxClass, frxDBSet, FR_Class,
   frOLEExl, frxExportPDF, frxExportXML, frxExportXLS, IBUpdateSQL, Dialogs,
   ADODB, Variants, DBFilter, IBUpdSQLW, IBStoredProc, UtilR,
-  Logger;
+  Logger, kbmMemTable;
 
 type
   TDM = class(TDataModule)
@@ -58,37 +58,6 @@ type
     frxXLSExport1: TfrxXLSExport;
     frxXMLExport1: TfrxXMLExport;
     frxPDFExport1: TfrxPDFExport;
-    NomenMem: TRxMemoryData;
-    NomenMemBALS: TStringField;
-    NomenMemNUMKCU: TStringField;
-    NomenMemNAMEPR: TStringField;
-    NomenMemNAMEPRS: TStringField;
-    NomenMemXARKT: TStringField;
-    NomenMemGOST: TStringField;
-    NomenMemMONEY: TFloatField;
-    NomenMemKEI: TStringField;
-    NomenMemEIP: TStringField;
-    NomenMemDATEIN: TDateField;
-    NomenMemNZ: TFloatField;
-    NomenMemTPR: TStringField;
-    NomenMemKOL: TFloatField;
-    NomenMemSUM: TFloatField;
-    NomenMemPRIXODM: TFloatField;
-    NomenMemRASXODM: TFloatField;
-    NomenMemSRASXM: TFloatField;
-    NomenMemSPRIXM: TFloatField;
-    NomenMemDATETR: TDateField;
-    NomenMemSKLAD: TStringField;
-    NomenMemEDNOR: TSmallintField;
-    NomenMemSSUM: TFloatField;
-    NomenMemNSUM: TFloatField;
-    NomenMemSKOL: TFloatField;
-    NomenMemCENAD: TFloatField;
-    NomenMemSUMD: TFloatField;
-    NomenMemSSUMD: TFloatField;
-    NomenMemSPRIXMD: TFloatField;
-    NomenMemSRASXMD: TFloatField;
-    NomenMemSUMNDS: TFloatField;
     NomenOld: TTable;
     PrihOld: TTable;
     RashOld: TTable;
@@ -246,6 +215,37 @@ type
     KartRashQuerySTRUK_ID: TSmallintField;
     KartRashQueryKLIENT_ID: TIntegerField;
     KartPrihQuerySUMMA: TFMTBCDField;
+    NomenMem: TkbmMemTable;
+    NomenMemBALS: TStringField;
+    NomenMemNUMKCU: TStringField;
+    NomenMemNAMEPR: TStringField;
+    NomenMemNAMEPRS: TStringField;
+    NomenMemXARKT: TStringField;
+    NomenMemGOST: TStringField;
+    NomenMemMONEY: TFloatField;
+    NomenMemKEI: TStringField;
+    NomenMemEIP: TStringField;
+    NomenMemDATEIN: TDateField;
+    NomenMemNZ: TFloatField;
+    NomenMemTPR: TStringField;
+    NomenMemKOL: TFloatField;
+    NomenMemSUM: TFloatField;
+    NomenMemPRIXODM: TFloatField;
+    NomenMemRASXODM: TFloatField;
+    NomenMemSRASXM: TFloatField;
+    NomenMemSPRIXM: TFloatField;
+    NomenMemDATETR: TDateField;
+    NomenMemSKLAD: TStringField;
+    NomenMemEDNOR: TSmallintField;
+    NomenMemSSUM: TFloatField;
+    NomenMemNSUM: TFloatField;
+    NomenMemSKOL: TFloatField;
+    NomenMemCENAD: TFloatField;
+    NomenMemSUMD: TFloatField;
+    NomenMemSSUMD: TFloatField;
+    NomenMemSPRIXMD: TFloatField;
+    NomenMemSUMNDS: TFloatField;
+    NomenMemSRASXMD: TFloatField;
     procedure DataModuleDestroy(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
 
@@ -763,7 +763,7 @@ begin
   NomenMem.EmptyTable;
   NomenMem.Open;
   if (Nomen.Active) and (Nomen.RecordCount > 0) then
-    NomenMem.LoadFromDataSet(Nomen, 0, lmAppend);
+    NomenMem.LoadFromDataSet(Nomen, [mtcpoAppend]);
 end;
 
 function TDM.saveNomenMemToNomen() : boolean;
