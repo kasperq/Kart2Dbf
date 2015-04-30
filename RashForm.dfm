@@ -21,19 +21,13 @@ object FRashForm: TFRashForm
     Height = 588
     Align = alClient
     DataSource = DM.DSKartOutlay
-    FooterColor = clWindow
-    FooterFont.Charset = DEFAULT_CHARSET
-    FooterFont.Color = clWindowText
-    FooterFont.Height = -11
-    FooterFont.Name = 'Tahoma'
-    FooterFont.Style = []
+    DynProps = <>
+    FooterParams.Color = clWindow
+    IndicatorOptions = [gioShowRowIndicatorEh]
     STFilter.Visible = True
     TabOrder = 0
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clWindowText
-    TitleFont.Height = -11
-    TitleFont.Name = 'Tahoma'
-    TitleFont.Style = []
+    object RowDetailData: TRowDetailPanelControlEh
+    end
   end
   object FindDlgEh1: TFindDlgEh
     DBGrid = DBGridEh1

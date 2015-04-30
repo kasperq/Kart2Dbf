@@ -20,18 +20,11 @@ object FPrihDbfQForm: TFPrihDbfQForm
     Width = 761
     Height = 417
     Align = alClient
-    DataSource = DM.DSPrihDbfQ
-    FooterColor = clWindow
-    FooterFont.Charset = DEFAULT_CHARSET
-    FooterFont.Color = clWindowText
-    FooterFont.Height = -11
-    FooterFont.Name = 'Tahoma'
-    FooterFont.Style = []
+    DynProps = <>
+    FooterParams.Color = clWindow
+    IndicatorOptions = [gioShowRowIndicatorEh]
     TabOrder = 0
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clWindowText
-    TitleFont.Height = -11
-    TitleFont.Name = 'Tahoma'
-    TitleFont.Style = []
+    object RowDetailData: TRowDetailPanelControlEh
+    end
   end
 end

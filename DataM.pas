@@ -4,9 +4,9 @@ interface
 
 uses
   SysUtils, Classes, IBDatabase, DB, IBCustomDataSet, IBQuery, RxIBQuery,
-  DBTables, RxQuery, ERxQuery, RxMemDS, frxDCtrl, frxClass, frxDBSet, FR_Class,
-  frOLEExl, frxExportPDF, frxExportXML, frxExportXLS, IBUpdateSQL, Dialogs,
-  ADODB, Variants, DBFilter, IBUpdSQLW, IBStoredProc, UtilR,
+  DBTables, RxQuery, ERxQuery, RxMemDS, frxDCtrl, frxClass, frxDBSet,
+  frxExportPDF, frxExportXML, frxExportXLS, IBUpdateSQL, Dialogs,
+  ADODB, Variants, IBUpdSQLW, IBStoredProc, UtilR,
   Logger, kbmMemTable;
 
 type
@@ -912,7 +912,7 @@ procedure TDM.DataModuleCreate(Sender: TObject);
 var
   userName3Char : string;
 begin
-  userName := GetCurrentUserName;
+  userName := GetCurrentUserNameWindows;
   userName3Char := copy(AnsiLowerCase(userName), 1, 3);
   BELMED.Close;
   BELMED.Params.Clear;

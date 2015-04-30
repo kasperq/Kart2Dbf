@@ -16,6 +16,10 @@ object KartVDbfForm: TKartVDbfForm
   Font.Height = -13
   Font.Name = 'System'
   Font.Style = []
+  GlassFrame.Left = 20
+  GlassFrame.Top = 20
+  GlassFrame.Right = 20
+  GlassFrame.Bottom = 20
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
@@ -23,10 +27,6 @@ object KartVDbfForm: TKartVDbfForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 16
-  GlassFrame.Bottom = 20
-  GlassFrame.Left = 20
-  GlassFrame.Right = 20
-  GlassFrame.Top = 20
   object Label1: TLabel
     Left = 148
     Top = 8
@@ -2166,18 +2166,17 @@ object KartVDbfForm: TKartVDbfForm
   object buxNameCombo: TComboBox
     Left = 225
     Top = 8
-    Width = 64
+    Width = 84
     Height = 27
+    Style = csDropDownList
     DropDownCount = 10
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
     Font.Name = 'Times New Roman'
     Font.Style = [fsBold]
-    ItemHeight = 19
     ParentFont = False
     TabOrder = 0
-    Text = 'BMG'
     OnChange = buxNameComboChange
   end
   object curMonthCombo: TComboBox
@@ -2192,7 +2191,6 @@ object KartVDbfForm: TKartVDbfForm
     Font.Height = -16
     Font.Name = 'Times New Roman'
     Font.Style = [fsBold]
-    ItemHeight = 19
     ItemIndex = 7
     ParentFont = False
     TabOrder = 1
@@ -2355,7 +2353,6 @@ object KartVDbfForm: TKartVDbfForm
     Font.Height = -13
     Font.Name = 'Times New Roman'
     Font.Style = [fsBold]
-    ItemHeight = 15
     ParentFont = False
     TabOrder = 11
     Text = 'strukCombo'

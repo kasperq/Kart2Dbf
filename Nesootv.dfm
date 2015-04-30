@@ -24,22 +24,15 @@ object FNesootv: TFNesootv
     Align = alClient
     AutoFitColWidths = True
     DataSource = DM.DSNesootvTbl
+    DynProps = <>
     Flat = True
-    FooterColor = clWindow
-    FooterFont.Charset = DEFAULT_CHARSET
-    FooterFont.Color = clWindowText
-    FooterFont.Height = -11
-    FooterFont.Name = 'Tahoma'
-    FooterFont.Style = []
+    FooterParams.Color = clWindow
+    IndicatorOptions = [gioShowRowIndicatorEh]
     STFilter.Visible = True
     TabOrder = 0
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clWindowText
-    TitleFont.Height = -11
-    TitleFont.Name = 'Tahoma'
-    TitleFont.Style = []
     Columns = <
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'SKLAD'
         Footers = <>
@@ -48,6 +41,7 @@ object FNesootv: TFNesootv
         Width = 70
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'ACCOUNT'
         Footers = <>
@@ -56,6 +50,7 @@ object FNesootv: TFNesootv
         Width = 70
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'NUMKSU'
         Footers = <>
@@ -64,6 +59,7 @@ object FNesootv: TFNesootv
         Width = 70
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'NAMEPR'
         Footers = <>
@@ -71,6 +67,7 @@ object FNesootv: TFNesootv
         Width = 150
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'KOL'
         Footers = <>
@@ -79,6 +76,7 @@ object FNesootv: TFNesootv
         Width = 70
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'MEI'
         Footers = <>
@@ -87,6 +85,7 @@ object FNesootv: TFNesootv
         Width = 70
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'DATETR'
         Footers = <>
@@ -95,6 +94,7 @@ object FNesootv: TFNesootv
         Width = 70
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'NUMNDOK'
         Footers = <>
@@ -103,11 +103,13 @@ object FNesootv: TFNesootv
         Width = 70
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'POST'
         Footers = <>
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'OPER'
         Footers = <>
@@ -115,21 +117,26 @@ object FNesootv: TFNesootv
         Width = 30
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'MES'
         Footers = <>
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'STRUK_ID'
         Footers = <>
         Visible = False
       end
       item
+        DynProps = <>
         EditButtons = <>
         FieldName = 'GOD'
         Footers = <>
       end>
+    object RowDetailData: TRowDetailPanelControlEh
+    end
   end
   object Panel1: TPanel
     Left = 0
@@ -524,7 +531,6 @@ object FNesootv: TFNesootv
       Font.Height = -13
       Font.Name = 'Times New Roman'
       Font.Style = [fsBold]
-      ItemHeight = 15
       ParentFont = False
       TabOrder = 0
       Text = 'BMG'
@@ -541,7 +547,6 @@ object FNesootv: TFNesootv
       Font.Height = -13
       Font.Name = 'Times New Roman'
       Font.Style = [fsBold]
-      ItemHeight = 15
       ParentFont = False
       TabOrder = 1
       Text = 'strukCombo'
@@ -594,6 +599,9 @@ object FNesootv: TFNesootv
   object ConfigUMC: TRxIBQuery
     Database = DM.Belmed
     Transaction = DM.RTrans
+    BufferChunks = 1000
+    CachedUpdates = False
+    ParamCheck = True
     SQL.Strings = (
       
         'SELECT rtrim(configumc.stkod) || '#39'   -   '#39' || configumc.stname a' +

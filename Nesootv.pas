@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Grids, DBGridEh, Buttons, ExtCtrls, StdCtrls, Spin, DB,
-  IBCustomDataSet, IBQuery, RxIBQuery, FindDlgEh;
+  IBCustomDataSet, IBQuery, RxIBQuery, FindDlgEh, DBGridEhGrouping, ToolCtrlsEh,
+  DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh;
 
 type
   TFNesootv = class(TForm)

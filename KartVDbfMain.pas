@@ -2,10 +2,11 @@ unit KartVDbfMain;
 
 interface
 
-uses Windows, Classes, Graphics, Forms, Controls, Menus,
+uses  Splash,
+  Windows, Classes, Graphics, Forms, Controls, Menus,
   Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls, ImgList, StdActns,
   ActnList, ToolWin, Mask, DBCtrlsEh, DBGridEh, DBLookupEh, Spin, RXCtrls,
-  SysUtils, Variants, BDE, SplshWnd, DB, Logger, UtilR;
+  SysUtils, Variants, BDE, rxSplshWnd, DB, Logger, UtilR, System.UITypes;
 
 type
   TKartVDbfForm = class(TForm)
@@ -64,10 +65,9 @@ type
 
     var
       newFilePath, oldFilePath, localDirPath : string;
-      Splash: TForm;
-      AniBmp1: TBitmap;
       log : TLogger;
       tF : TextFile;
+      splsh : TFSplash;
 
   public
     function addKartRec2NomenDbf(kartType: string; numkcu, sklad, bals: string) : boolean;
@@ -161,8 +161,7 @@ end;
 function TKartVDbfForm.copyDbfToLocalDir() : boolean;
 begin
   log.appendMsg('Копируем файлы в локальную папку.');
-  Splash := ShowSplashWindow(AniBmp1,
-                             'Копирование файлов в локальную папку. Подождите, пожалуйста...', True, nil);
+  splsh.showSplash('Копирование файлов в локальную папку. Подождите, пожалуйста...');
   result := false;
   try
     if (DirectoryExists('c:\work\')) then
@@ -191,13 +190,13 @@ begin
   except
     on e : exception do
     begin
-      Splash.Free;
+      splsh.hideSplash;
       log.appendMsg('Не удалось скопировать файлы в локальную папку. ' + e.Message);
       MessageDlg('Не удалось скопировать файлы в локальную папку. ' + e.Message, mtWarning, [mbOK], 0);
       SysUtils.Abort;
     end;
   end;
-  Splash.Free;
+  splsh.hideSplash;
 end;
 
 function TKartVDbfForm.copyDbfToNetDir() : boolean;
@@ -222,9 +221,9 @@ begin
        and (FileExists(oldFilePath + 'prixod.dbf')) then
     begin
       log.appendMsg('Удаление NOMEN, PRIXOD, RASXOD.dbf из локальной папки');
-      DeleteFileA(PChar(localDirPath + 'nomen.dbf'));
-      DeleteFileA(PChar(localDirPath + 'prixod.dbf'));
-      DeleteFileA(PChar(localDirPath + 'rasxod.dbf'));
+      DeleteFileA(PAnsiChar(localDirPath + 'nomen.dbf'));
+      DeleteFileA(PAnsiChar(localDirPath + 'prixod.dbf'));
+      DeleteFileA(PAnsiChar(localDirPath + 'rasxod.dbf'));
       log.appendMsg('Удаление локальной папки: ' + localDirPath);
       RemoveDir(localDirPath);
       log.appendMsg('Удалили');
@@ -248,8 +247,7 @@ end;
 
 function TKartVDbfForm.saveOldFiles() : boolean;
 begin
-  Splash := ShowSplashWindow(AniBmp1,
-                             'Создание резервной копии файлов. Подождите, пожалуйста...', True, nil);
+  splsh.showSplash('Создание резервной копии файлов. Подождите, пожалуйста...');
   if (ForceDirectories(newFilePath)) then
   begin
     log.appendMsg('Создали папку для резервных файлов: ' + newFilePath);
@@ -282,7 +280,7 @@ begin
     log.appendMsg('Не создали резервную копию файлов. Не создали резервную папку.');
     result := false;
   end;
-  Splash.Free;
+  splsh.hideSplash;
 end;
 
 function TKartVDbfForm.addKartRec2NomenDbf(kartType: string;
@@ -564,14 +562,11 @@ begin
   end;
   delDoubleRecs := false;
   deleting := false;
-  AniBmp1 := TBitmap.Create;
-//  AniBmp1.LoadFromResourceName(HInstance, 'booka');
   try
     setPathStrings;
     if (saveOldFiles()) and (copyDbfToLocalDir()) then
     begin
-      Splash := ShowSplashWindow(AniBmp1,
-                                 'Сохранение данных. Подождите, пожалуйста...', True, nil);
+      splsh.showSplash('Сохранение данных. Подождите, пожалуйста...');
       dm.openNesootvTbl(buxNameCombo.Text, curMonth, curYear, dm.ConfigUMCSTRUK_ID.AsInteger);
       dm.clearNesootvTbl;
       dm.saveNesootvTbl;
@@ -649,8 +644,7 @@ end;
 
 procedure TKartVDbfForm.freeSplash;
 begin
-  if (Splash.Active) then
-    Splash.Free;
+  splsh.hideSplash;
 end;
 
 procedure TKartVDbfForm.copyingSucceded;
@@ -734,6 +728,7 @@ end;
 
 procedure TKartVDbfForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  FreeAndNil(splsh);
   dm.Prih.Close;
   dm.Rash.Close;
   dm.Nomen.Close;
@@ -747,6 +742,7 @@ procedure TKartVDbfForm.FormCreate(Sender: TObject);
 begin
   fillMachineList(buxNameCombo);
   log := TLogger.Create;
+  splsh := TFSplash.Create(Application);
 end;
 
 procedure TKartVDbfForm.FormShow(Sender: TObject);
