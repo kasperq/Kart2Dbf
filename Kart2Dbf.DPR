@@ -1,7 +1,6 @@
 program Kart2Dbf;
 
 uses
-  ExceptionLog,
   Forms,
   KartVDbfMain in 'KartVDbfMain.pas' {KartVDbfForm},
   DataM in 'DataM.pas' {DM: TDataModule},
@@ -12,7 +11,8 @@ uses
   PrihDbfQForm in 'PrihDbfQForm.pas' {FPrihDbfQForm},
   Nesootv in 'Nesootv.pas' {FNesootv},
   Logger in 'Logger.pas',
-  CopyFiles in 'CopyFiles.pas';
+  CopyFiles in 'CopyFiles.pas',
+  Splash in 'Splash.pas' {FSplash};
 
 {$R *.RES}
 

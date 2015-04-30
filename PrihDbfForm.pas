@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Grids, DBGridEh;
+  Dialogs, Grids, DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
+  DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh;
 
 type
   TFPrihDbfForm = class(TForm)

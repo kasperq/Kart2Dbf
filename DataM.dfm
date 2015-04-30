@@ -14,6 +14,7 @@ object DM: TDM
       'lc_ctype=WIN1251')
     LoginPrompt = False
     DefaultTransaction = RTrans
+    ServerType = 'IBServer'
     Left = 32
     Top = 8
   end
@@ -30,6 +31,9 @@ object DM: TDM
   object KartPrihQuery: TRxIBQuery
     Database = Belmed
     Transaction = RTrans
+    BufferChunks = 1000
+    CachedUpdates = False
+    ParamCheck = True
     SQL.Strings = (
       
         'select document.doc_id, iif(relaStr.stkod is not null, relaStr.s' +
@@ -279,6 +283,9 @@ object DM: TDM
   object ConfigUMC: TRxIBQuery
     Database = Belmed
     Transaction = RTrans
+    BufferChunks = 1000
+    CachedUpdates = False
+    ParamCheck = True
     SQL.Strings = (
       
         'SELECT rtrim(configumc.stkod) || '#39'   -   '#39' || configumc.stname a' +
@@ -354,6 +361,9 @@ object DM: TDM
   object KartRashQuery: TRxIBQuery
     Database = Belmed
     Transaction = RTrans
+    BufferChunks = 1000
+    CachedUpdates = False
+    ParamCheck = True
     SQL.Strings = (
       
         'select iif(relaStr.stkod is not null, relaStr.stkod, configumc.s' +
@@ -670,7 +680,7 @@ object DM: TDM
     Top = 112
   end
   object frxReport1: TfrxReport
-    Version = '4.9.32'
+    Version = '5.2.3'
     DotMatrixReport = False
     IniFile = '\Software\Fast Reports'
     PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick]
@@ -707,6 +717,7 @@ object DM: TDM
       TopMargin = 10.000000000000000000
       BottomMargin = 10.000000000000000000
       object ReportTitle1: TfrxReportTitle
+        FillType = ftBrush
         Height = 22.677180000000000000
         Top = 18.897650000000000000
         Width = 1046.929810000000000000
@@ -715,28 +726,27 @@ object DM: TDM
           Left = 158.740260000000000000
           Width = 729.449290000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -16
           Font.Name = 'Arial'
           Font.Style = []
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             
-              #1056#1116#1056#181#1056#1169#1056#1109#1056#177#1056#176#1056#1030#1056#187#1056#181#1056#1029#1056#1029#1057#8249#1056#181' '#1057#1026#1056#176#1057#1027#1057#8230#1056#1109#1056#1169#1057#8249' '#1056#1105#1056#183'-'#1056#183#1056#176' '#1056#1029#1056#181#1056#1169#1056#1109#1057#1027#1057#8218 +
-              #1056#176#1057#8218#1056#1109#1057#8225#1056#1029#1056#1109#1056#1110#1056#1109' '#1056#1108#1056#1109#1056#187#1056#1105#1057#8225#1056#181#1057#1027#1057#8218#1056#1030#1056#176' '#1056#1029#1056#176' '#1056#1108#1056#176#1057#1026#1057#8218#1056#1109#1057#8225#1056#1108#1056#181)
+              #1053#1077#1076#1086#1073#1072#1074#1083#1077#1085#1085#1099#1077' '#1088#1072#1089#1093#1086#1076#1099' '#1080#1079'-'#1079#1072' '#1085#1077#1076#1086#1089#1090#1072#1090#1086#1095#1085#1086#1075#1086' '#1082#1086#1083#1080#1095#1077#1089#1090#1074#1072' '#1085#1072' '#1082#1072#1088#1090#1086#1095#1082 +
+              #1077)
           ParentFont = False
         end
       end
       object Header1: TfrxHeader
+        FillType = ftBrush
         Height = 18.897650000000000000
         Top = 102.047310000000000000
         Width = 1046.929810000000000000
         object Memo15: TfrxMemoView
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -747,15 +757,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#1038#1056#1108#1056#187#1056#176#1056#1169)
+          Memo.UTF8W = (
+            #1057#1082#1083#1072#1076)
           ParentFont = False
         end
         object Memo16: TfrxMemoView
           Left = 68.031540000000010000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -766,7 +775,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             'NUMKSU')
           ParentFont = False
         end
@@ -774,7 +783,6 @@ object DM: TDM
           Left = 136.063080000000000000
           Width = 257.008040000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -785,15 +793,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#1116#1056#176#1056#1105#1056#1112#1056#181#1056#1029#1056#1109#1056#1030#1056#176#1056#1029#1056#1105#1056#181)
+          Memo.UTF8W = (
+            #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077)
           ParentFont = False
         end
         object Memo18: TfrxMemoView
           Left = 393.071120000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -804,15 +811,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#8221#1056#176#1057#8218#1056#176)
+          Memo.UTF8W = (
+            #1044#1072#1090#1072)
           ParentFont = False
         end
         object Memo19: TfrxMemoView
           Left = 461.102660000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -823,15 +829,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#8221#1056#1109#1056#1108'-'#1057#8218)
+          Memo.UTF8W = (
+            #1044#1086#1082'-'#1090)
           ParentFont = False
         end
         object Memo20: TfrxMemoView
           Left = 529.134199999999900000
           Width = 49.133890000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -842,15 +847,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#1115#1056#1111#1056#181#1057#1026'.')
+          Memo.UTF8W = (
+            #1054#1087#1077#1088'.')
           ParentFont = False
         end
         object Memo21: TfrxMemoView
           Left = 578.268090000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -861,15 +865,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#1113#1056#1109#1056#187'-'#1056#1030#1056#1109)
+          Memo.UTF8W = (
+            #1050#1086#1083'-'#1074#1086)
           ParentFont = False
         end
         object Memo22: TfrxMemoView
           Left = 714.331170000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -880,15 +883,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#1038#1057#8225#1056#181#1057#8218)
+          Memo.UTF8W = (
+            #1057#1095#1077#1090)
           ParentFont = False
         end
         object Memo23: TfrxMemoView
           Left = 782.362710000000000000
           Width = 60.472480000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -899,15 +901,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#8221#1056#181#1056#177#1056#181#1057#8218)
+          Memo.UTF8W = (
+            #1044#1077#1073#1077#1090)
           ParentFont = False
         end
         object Memo24: TfrxMemoView
           Left = 842.835190000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -918,15 +919,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#1113#1056#1109#1056#1112#1057#1107)
+          Memo.UTF8W = (
+            #1050#1086#1084#1091)
           ParentFont = False
         end
         object Memo25: TfrxMemoView
           Left = 910.866730000000000000
           Width = 136.063080000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -937,15 +937,14 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#1113#1056#1109#1056#1112#1057#1107' '#1056#1029#1056#176#1056#1105#1056#1112'-'#1056#181)
+          Memo.UTF8W = (
+            #1050#1086#1084#1091' '#1085#1072#1080#1084'-'#1077)
           ParentFont = False
         end
         object Memo26: TfrxMemoView
           Left = 646.299630000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -956,12 +955,13 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
-            #1056#8226#1056#1169'.'#1056#1105#1056#183#1056#1112'.')
+          Memo.UTF8W = (
+            #1045#1076'.'#1080#1079#1084'.')
           ParentFont = False
         end
       end
       object MasterData1: TfrxMasterData
+        FillType = ftBrush
         Height = 18.897650000000000000
         Top = 143.622140000000000000
         Width = 1046.929810000000000000
@@ -972,7 +972,6 @@ object DM: TDM
         object Memo3: TfrxMemoView
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataField = 'SKLAD'
           DataSet = frxDBDataset1
@@ -984,7 +983,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."SKLAD"]')
           ParentFont = False
         end
@@ -992,7 +991,6 @@ object DM: TDM
           Left = 68.031540000000010000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -1003,7 +1001,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."NUMKSU"]')
           ParentFont = False
         end
@@ -1011,7 +1009,6 @@ object DM: TDM
           Left = 136.063080000000000000
           Width = 257.008040000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataField = 'NAMEPR'
           DataSet = frxDBDataset1
@@ -1023,7 +1020,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."NAMEPR"]')
           ParentFont = False
         end
@@ -1031,7 +1028,6 @@ object DM: TDM
           Left = 393.071120000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -1042,7 +1038,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."DATETR"]')
           ParentFont = False
         end
@@ -1050,7 +1046,6 @@ object DM: TDM
           Left = 461.102660000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
           DataSetName = 'frxDBDataset1'
@@ -1061,7 +1056,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."NUMNDOK"]')
           ParentFont = False
         end
@@ -1069,7 +1064,6 @@ object DM: TDM
           Left = 529.134199999999900000
           Width = 49.133890000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataField = 'OPER'
           DataSet = frxDBDataset1
@@ -1081,7 +1075,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."OPER"]')
           ParentFont = False
         end
@@ -1089,7 +1083,6 @@ object DM: TDM
           Left = 578.268090000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataField = 'KOL'
           DataSet = frxDBDataset1
@@ -1101,7 +1094,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."KOL"]')
           ParentFont = False
         end
@@ -1109,7 +1102,6 @@ object DM: TDM
           Left = 714.331170000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataField = 'ACCOUNT'
           DataSet = frxDBDataset1
@@ -1121,7 +1113,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."ACCOUNT"]')
           ParentFont = False
         end
@@ -1129,7 +1121,6 @@ object DM: TDM
           Left = 782.362710000000000000
           Width = 60.472480000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataField = 'DEBET'
           DataSet = frxDBDataset1
@@ -1141,7 +1132,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."DEBET"]')
           ParentFont = False
         end
@@ -1149,7 +1140,6 @@ object DM: TDM
           Left = 842.835190000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataField = 'CEX'
           DataSet = frxDBDataset1
@@ -1161,7 +1151,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."CEX"]')
           ParentFont = False
         end
@@ -1169,7 +1159,6 @@ object DM: TDM
           Left = 910.866730000000000000
           Width = 136.063080000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataField = 'POST'
           DataSet = frxDBDataset1
@@ -1181,7 +1170,7 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."POST"]')
           ParentFont = False
         end
@@ -1189,7 +1178,6 @@ object DM: TDM
           Left = 646.299630000000000000
           Width = 68.031540000000010000
           Height = 18.897650000000000000
-          ShowHint = False
           StretchMode = smMaxHeight
           DataField = 'MEI'
           DataSet = frxDBDataset1
@@ -1201,12 +1189,13 @@ object DM: TDM
           Font.Style = []
           Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
           HAlign = haCenter
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[frxDBDataset1."MEI"]')
           ParentFont = False
         end
       end
       object PageFooter1: TfrxPageFooter
+        FillType = ftBrush
         Height = 22.677180000000000000
         Top = 222.992270000000000000
         Width = 1046.929810000000000000
@@ -1215,14 +1204,13 @@ object DM: TDM
           Left = 952.441560000000100000
           Width = 94.488250000000000000
           Height = 18.897650000000000000
-          ShowHint = False
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -13
           Font.Name = 'Arial'
           Font.Style = []
           HAlign = haRight
-          Memo.UTF8 = (
+          Memo.UTF8W = (
             '[Page#]')
           ParentFont = False
         end
@@ -1258,6 +1246,7 @@ object DM: TDM
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
+    DataOnly = False
     ExportEMF = True
     AsText = False
     Background = True
@@ -1272,6 +1261,7 @@ object DM: TDM
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
+    DataOnly = False
     Background = True
     Creator = 'FastReport'
     EmptyLines = True
@@ -1285,10 +1275,12 @@ object DM: TDM
     UseFileCache = True
     ShowProgress = True
     OverwritePrompt = False
+    DataOnly = False
     PrintOptimized = False
     Outline = False
     Background = False
     HTMLTags = True
+    Quality = 95
     Author = 'FastReport'
     Subject = 'FastReport PDF export'
     ProtectionFlags = [ePrint, eModify, eCopy, eAnnot]
@@ -1325,7 +1317,9 @@ object DM: TDM
   object NesootvTbl: TRxIBQuery
     Database = Belmed
     Transaction = RTrans
+    BufferChunks = 1000
     CachedUpdates = True
+    ParamCheck = True
     SQL.Strings = (
       'select *'
       'from k2d_nedobav_rash'
@@ -1995,6 +1989,9 @@ object DM: TDM
   object LogQuery: TRxIBQuery
     Database = Belmed
     Transaction = RTrans
+    BufferChunks = 1000
+    CachedUpdates = False
+    ParamCheck = True
     SQL.Strings = (
       'select *'
       'from k2d_log'
@@ -2190,18 +2187,12 @@ object DM: TDM
     FieldDefs = <>
     IndexDefs = <>
     SortOptions = []
-    AllDataOptions = [mtfSaveData, mtfSaveNonVisible, mtfSaveBlobs, mtfSaveFiltered, mtfSaveIgnoreRange, mtfSaveIgnoreMasterDetail, mtfSaveDeltas]
-    CommaTextOptions = [mtfSaveData]
-    CSVQuote = '"'
-    CSVFieldDelimiter = ','
-    CSVRecordDelimiter = ','
-    CSVTrueString = 'True'
-    CSVFalseString = 'False'
-    PersistentSaveOptions = [mtfSaveData, mtfSaveNonVisible, mtfSaveIgnoreRange, mtfSaveIgnoreMasterDetail]
     PersistentBackup = False
     ProgressFlags = [mtpcLoad, mtpcSave, mtpcCopy]
+    LoadedCompletely = False
+    SavedCompletely = False
     FilterOptions = []
-    Version = '2.53g'
+    Version = '7.64.00 Standard Edition'
     LanguageID = 0
     SortID = 0
     SubLanguageID = 1
