@@ -550,6 +550,8 @@ end;
 
 procedure TKartVDbfForm.copyKartVDbf(copyObjects : word; sender : string);   // 0 - all; 1 - prih; 2 - rash
 begin
+  if (splsh = nil) then
+    splsh := TFSplash.Create(Application);
   dm.openWorkSession;
   dm.setLogger(log);
   log.startLogging(buxNameCombo.Text, sender, dm.ConfigUMCSTKOD.AsString,
@@ -742,7 +744,6 @@ procedure TKartVDbfForm.FormCreate(Sender: TObject);
 begin
   fillMachineList(buxNameCombo);
   log := TLogger.Create;
-  splsh := TFSplash.Create(Application);
 end;
 
 procedure TKartVDbfForm.FormShow(Sender: TObject);
