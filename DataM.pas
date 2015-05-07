@@ -246,6 +246,10 @@ type
     NomenMemSPRIXMD: TFloatField;
     NomenMemSUMNDS: TFloatField;
     NomenMemSRASXMD: TFloatField;
+    KartPrihQueryKLIENT_ID: TIntegerField;
+    KartPrihQuerySTNAME: TIBStringField;
+    KartPrihQuerySTKOD: TIBStringField;
+    KartPrihQuerySTKOD1: TIBStringField;
     procedure DataModuleDestroy(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
 

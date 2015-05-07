@@ -44,20 +44,26 @@ object DM: TDM
         'ost,'
       'cast(iif(document.tip_op_id = 6, '#39'9'#39', '#39'1'#39') as char(2)) oper,'
       'document.date_op datetr,'
-      'substring(trim(document.ndok) from 1 for 5)  numndok, '
+      'iif(document.tip_dok_id = 195,'
+      '    '#39#39','
+      '    substring(trim(document.ndok) from 1 for 5)) numndok, '
       'substring(trim(docosn.ndok) from 1 for 10) nsd,'
       'docosn.date_dok datsd,'
-      
-        'cast(iif(document.tip_op_id = 1, document.klient_id, struk.stkod' +
-        ') as char(5)) kp,'
+      'cast(iif(document.tip_op_id = 1, '
+      '            document.klient_id, '
+      '            iif(document.tip_dok_id = 195,'
+      '                confPost.stkod,'
+      '                struk.stkod)) as char(5)) kp,'
       'kart.kol_prih kol, kart.kol_prih kolotg,'
       
         'iif(document.struk_id < 0, cast(kart.kei_id2  as char(4)), cast(' +
         'matrop.kei_id as char(4))) mei,'
       'ediz.neis eiz,'
-      
-        'iif(document.tip_op_id = 1, substring(sprorg.nam from 1 for 35),' +
-        ' struk.stname) post,'
+      'iif(document.tip_op_id = 1, '
+      '    substring(sprorg.nam from 1 for 35), '
+      '    iif(document.tip_dok_id = 195,'
+      '        confPost.stkod,'
+      '        struk.stname)) post,'
       
         'substring(kart.stroka_id from char_length(kart.stroka_id)-3 for ' +
         'char_length(kart.stroka_id)) np, '
@@ -68,7 +74,9 @@ object DM: TDM
       
         'document.nds, ostatki.account, tip_oper.nam_op, tipdok.short_nam' +
         'e, tip_oper.tip_op_id,'
-      'tipdok.tip_dok_id'
+      
+        'tipdok.tip_dok_id, document.klient_id, struk.stname, struk.stkod' +
+        ', confPost.stkod'
       'from document'
       ''
       'inner join kart on document.doc_id = kart.doc_id'
@@ -90,6 +98,9 @@ object DM: TDM
       
         'left join struk relaStr on relaStr.struk_id = configumc.rela_str' +
         'uk_id'
+      
+        'left join configumc confPost on confPost.struk_id = document.kli' +
+        'ent_id'
       ''
       'where kart.kol_prih <> 0 and matrop.account <> '#39'01'#39
       'and document.struk_id = :struk_id '
@@ -274,6 +285,28 @@ object DM: TDM
       Precision = 18
       Size = 6
     end
+    object KartPrihQueryKLIENT_ID: TIntegerField
+      FieldName = 'KLIENT_ID'
+      Origin = '"DOCUMENT"."KLIENT_ID"'
+      Required = True
+    end
+    object KartPrihQuerySTNAME: TIBStringField
+      FieldName = 'STNAME'
+      Origin = '"STRUK"."STNAME"'
+      FixedChar = True
+    end
+    object KartPrihQuerySTKOD: TIBStringField
+      FieldName = 'STKOD'
+      Origin = '"STRUK"."STKOD"'
+      FixedChar = True
+      Size = 4
+    end
+    object KartPrihQuerySTKOD1: TIBStringField
+      FieldName = 'STKOD1'
+      Origin = '"CONFIGUMC"."STKOD"'
+      FixedChar = True
+      Size = 4
+    end
   end
   object DSKartIncomes: TDataSource
     DataSet = KartPrihQuery
@@ -392,15 +425,18 @@ object DM: TDM
         'iif(document.struk_id < 0,cast(kart.kei_id2 as char(4)), cast(ma' +
         'trop.kei_id as char(4))) eiz,'
       'ediz.neis mei,'
-      
-        'iif(document.tip_op_id in (32, 103, 104, 112, 113), '#39#39', struk.st' +
-        'kod) cex,'
+      'iif(document.tip_op_id in (32, 103, 104, 112, 113), '
+      '    '#39#39',  '
+      '    struk.stkod) cex,'
       'iif(document.struk_id in (163, 87),'
       '    struk.stkod,'
       '    iif(document.tip_op_id in (32, 103, 104, 112, 113),'
       
         '        iif(configumc.struk_id in (542, 543, 544, 545, 546, 708,' +
-        ' -540), '#39'1600'#39', configumc.stkod), struk.stname)) post,'
+        ' -540), '
+      '            '#39'1600'#39', '
+      '            configumc.stkod), '
+      '        struk.stname)) post,'
       'kart.cena money,'
       'iif(document.tip_op_id in (32, 103, 104, 112, 113),'
       '    iif(kart.sum_nds = 0, kart.summa, kart.sum_nds),'
