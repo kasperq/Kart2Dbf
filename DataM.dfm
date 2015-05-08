@@ -45,7 +45,7 @@ object DM: TDM
       'cast(iif(document.tip_op_id = 6, '#39'9'#39', '#39'1'#39') as char(2)) oper,'
       'document.date_op datetr,'
       'iif(document.tip_dok_id = 195,'
-      '    '#39#39','
+      '    confPost.stkod,'
       '    substring(trim(document.ndok) from 1 for 5)) numndok, '
       'substring(trim(docosn.ndok) from 1 for 10) nsd,'
       'docosn.date_dok datsd,'
@@ -1575,7 +1575,6 @@ object DM: TDM
       'from "f:\bm444\zerno1\rasxod.dbf" rasxod'
       'where rasxod.doc_id <> 0')
     UpdateObject = UpdRash
-    Macros = <>
     EhSQL.Strings = (
       'select *'
       'from "f:\bm444\zerno1\rasxod.dbf" rasxod'
@@ -1795,7 +1794,6 @@ object DM: TDM
       'where prixod.doc_id <> 0'
       'and prixod.sklad = :stkod')
     UpdateObject = UpdPrih
-    Macros = <>
     EhSQL.Strings = (
       'select *'
       'from "f:\bm444\zerno1\prixod.dbf" prixod'
@@ -2163,7 +2161,6 @@ object DM: TDM
     SQL.Strings = (
       'select max(prixod.regnsf) maxRegnsf'
       'from "f:\bm444\zerno1\prixod.dbf" prixod')
-    Macros = <>
     EhSQL.Strings = (
       'select max(prixod.regnsf) maxRegnsf'
       'from "f:\bm444\zerno1\prixod.dbf" prixod')
@@ -2181,7 +2178,6 @@ object DM: TDM
       'from '#39'f:\bmomts\bmomts.dbf'#39' bmomts'
       'where bmomts.struk_id = :struk_id'
       'and bmomts.bmg = :buxName')
-    Macros = <>
     EhSQL.Strings = (
       'select bmomts.bmg, bmomts.struk_id'
       'from '#39'f:\bmomts\bmomts.dbf'#39' bmomts'
