@@ -1,0 +1,37 @@
+object FSplash: TFSplash
+  Left = 0
+  Top = 0
+  BorderStyle = bsNone
+  ClientHeight = 46
+  ClientWidth = 69
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poOwnerFormCenter
+  Visible = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object lbl_message: TLabel
+    Left = 0
+    Top = 0
+    Width = 5
+    Height = 19
+    Alignment = taCenter
+    Color = clAppWorkSpace
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+    Transparent = False
+    Layout = tlCenter
+    WordWrap = True
+  end
+end
