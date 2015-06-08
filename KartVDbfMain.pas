@@ -632,6 +632,8 @@ end;
 
 procedure TKartVDbfForm.copyRash(copyObjects : integer);
 begin
+  if (cb_vxControl.Checked) then
+    log.appendMsg('Входной контроль.');
   log.appendMsg('Начинаем копирование расходов.');
   dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString);
@@ -701,6 +703,7 @@ end;
 procedure TKartVDbfForm.buxNameComboChange(Sender: TObject);
 begin
   setPathStrings;
+  dm.setBuxName(AnsiLowerCase(buxNameCombo.Text));
 end;
 
 procedure TKartVDbfForm.lastNeobrRashBtnClick(Sender: TObject);

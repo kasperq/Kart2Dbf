@@ -301,13 +301,15 @@ type
     procedure setLogger(var log : TLogger);
     function checkBuxStruks(strukId : integer; buxName : string) : boolean;
     procedure setVxodControlRashQuery(setVxContr : boolean);
+    procedure setKartRashQueryUsl;
+    procedure setBuxName(value : string);
 
     property diskPath : string read getDiskPath write setDiskLetter;
 
     var
       filterMonth, filterGod, filterStrukId : integer;
-      userName : string;
-      showPrih : boolean;
+      userName, buxName : string;
+      showPrih, vxControl : boolean;
 
   end;
 
@@ -322,6 +324,11 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TDM.setBuxName(value : string);
+begin
+  self.buxName := value;
+end;
 
 function TDM.checkBuxStruks(strukId : integer; buxName : string) : boolean;
 begin
@@ -746,6 +753,8 @@ begin
   dm.KartRashQuery.ParamByName('struk_id').AsInteger := dm.ConfigUMCSTRUK_ID.AsInteger;
   dm.KartRashQuery.ParamByName('mes').AsInteger := curMonth;
   dm.KartRashQuery.ParamByName('god').AsInteger := curYear;
+  if (not vxControl) then
+    setKartRashQueryUsl;
   dm.KartRashQuery.Open;
   dm.KartRashQuery.FetchAll;
   log^.appendMsg('Выбрали данные по расходам из IB kartRashQuery: ' + IntToStr(KartRashQuery.RecordCount));
@@ -952,12 +961,22 @@ end;
 procedure TDM.setVxodControlRashQuery(setVxContr : boolean);
 begin
   KartRashQuery.Close;
+  vxControl := setVxContr;
   if (setVxContr) then
     KartRashQuery.MacroByName('usl').AsString := 'document.tip_op_id = 135 '
                                                  + 'and document.tip_dok_id = 125 '
   else
+    setKartRashQueryUsl;
+end;
+
+procedure TDM.setKartRashQueryUsl;
+begin
+  KartRashQuery.Close;
+  if (buxName = 'bm6') then
+    KartRashQuery.MacroByName('usl').AsString := 'document.tip_dok_id = 198'
+  else
     KartRashQuery.MacroByName('usl').AsString := 'tip_oper.gr_op_id = 2 and tip_oper.tip_op_id <> 135 '
-                                                 + ' and tip_oper.tip_op_id <> 153 ';
+                                                 + ' and tip_oper.tip_op_id <> 153 and document.tip_dok_id <> 198';
 end;
 
 end.
