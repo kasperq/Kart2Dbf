@@ -157,7 +157,6 @@ type
     PrihKREG: TSmallintField;
     PrihNP: TFloatField;
     PrihKORR: TStringField;
-    PrihWW1: TStringField;
     PrihSUMD: TFloatField;
     PrihDOC_ID: TFloatField;
     WorkSession: TSession;
@@ -250,6 +249,32 @@ type
     KartPrihQuerySTNAME: TIBStringField;
     KartPrihQuerySTKOD: TIBStringField;
     KartPrihQuerySTKOD1: TIBStringField;
+    PrihPRIXOD_ID: TFloatField;
+    PrihSTRUK_ID: TSmallintField;
+    KartPrihQuerySTRUK_ID: TSmallintField;
+    KartRashQueryNAME: TIBStringField;
+    KartRashQueryTIP_DOK_ID: TSmallintField;
+    q_iznos: TRxIBQuery;
+    q_iznosNUMKSU: TIBStringField;
+    q_iznosNAMEPR: TIBStringField;
+    q_iznosKEI: TSmallintField;
+    q_iznosEIZ: TIBStringField;
+    q_iznosOPER: TIBStringField;
+    q_iznosDATETR: TDateField;
+    q_iznosNUMNDOK: TIBStringField;
+    q_iznosCEX: TIBStringField;
+    q_iznosPOST: TIBStringField;
+    q_iznosKOL: TFMTBCDField;
+    q_iznosSUMMA: TIBBCDField;
+    q_iznosSKLAD: TIBStringField;
+    q_iznosDOC_ID: TIntegerField;
+    q_iznosSTRUK_ID: TIntegerField;
+    q_iznosBALS: TIBStringField;
+    q_iznosDEBET: TIBStringField;
+    q_iznosNAMEPRS: TIBStringField;
+    q_iznosXARKT: TIBStringField;
+    q_iznosGOST: TIBStringField;
+    RashRASXOD_ID: TFloatField;
     procedure DataModuleDestroy(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
 
@@ -276,19 +301,19 @@ type
     function editNomenRec(kartType, mes, god, buxName: string; kol, summa, sumSNds : double) : boolean;
     function appendNomen(bals, numkcu, namepr, nameprs, xarkt, gost, eip,
                          sklad, kei : string; dateTr : TDateTime) : boolean;
-    procedure activateNomenDbf(localPath, stkod : string; exclusive : boolean);
+    procedure activateNomenDbf(localPath, stkod : string; exclusive : boolean; iznos : boolean);
     procedure openNomenOldDbf(localPath : string; exclusive : boolean);
 
     procedure activatePrihDbf(localPath, stkod : string; exclusive : boolean);
     procedure openPrihOldDbf(localPath : string; exclusive : boolean);
-    procedure openPrihDbfQuery(localPath, stkod : string);
+    procedure openPrihDbfQuery(localPath, stkodRela, strukId, stkod : string);
     procedure activateKartPrihQuery(curMonth : integer; curYear : integer);
     procedure restoreNomenForPrih(curMonth, curYear : integer; buxName : string);
     procedure clearPrih;
     procedure openMaxRegnsfPrih(localPath, stkod : string);
 
     procedure openRashOldDbf(localPath : string; exclusive : boolean);
-    procedure openRashDbfQuery(localPath, stkodRela, strukId, stkod : string);
+    procedure openRashDbfQuery(localPath, stkodRela, strukId, stkod : string; iznos : boolean);
     procedure activateRashDbf(localPath, stkod : string; exclusive : boolean);
     procedure activateKartRashQuery(curMonth : integer; curYear : integer);
     procedure clearRash;
@@ -302,12 +327,17 @@ type
     function checkBuxStruks(strukId : integer; buxName : string) : boolean;
     procedure setVxodControlRashQuery(setVxContr : boolean);
     procedure setKartRashQueryUsl;
+    procedure setSpecOdezh(setSpecOdezh : boolean);
     procedure setBuxName(value : string);
+    procedure setPrixodId;
+    procedure setRasxodId;
+
+    procedure openIznos(month, year, strukId : integer);
 
     property diskPath : string read getDiskPath write setDiskLetter;
 
     var
-      filterMonth, filterGod, filterStrukId : integer;
+      filterMonth, filterGod, filterStrukId, maxPrId, maxRId : integer;
       userName, buxName : string;
       showPrih, vxControl : boolean;
 
@@ -554,9 +584,12 @@ begin
   PrihDbf.Exclusive := exclusive;
   PrihDbf.TableName := AnsiLowerCase(localPath) + '\prixod.dbf';
   PrihDbf.Open;
-  PrihDbf.Filtered := false;
-  PrihDbf.Filter := 'SKLAD = ' + stkod;
-  PrihDbf.Filtered := true;
+  if (stkod <> '') then
+  begin
+    PrihDbf.Filtered := false;
+    PrihDbf.Filter := 'SKLAD = ' + stkod;
+    PrihDbf.Filtered := true;
+  end;
   PrihDbf.Last;
 end;
 
@@ -569,28 +602,29 @@ begin
   dm.maxPrihRegnsf.Open;
 end;
 
-procedure TDM.openPrihDbfQuery(localPath, stkod : string);
+procedure TDM.openPrihDbfQuery(localPath, stkodRela, strukId, stkod : string);
 begin
   Prih.Close;
   Prih.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'prixod.dbf" prixod '
-                        + 'where prixod.doc_id <> 0 and prixod.sklad = "' + stkod + '" ';
+                        + 'where prixod.doc_id <> 0 and prixod.sklad = "' + stkodRela + '" ';
+  if (stkodRela <> stkod) or (stkod = '1600') or (stkod = '4300') then
+  	Prih.EhSQL.Text := Prih.EhSQL.Text + ' and prixod.struk_id = "' + strukId + '" ';
   UpdPrih.InsertSQL.Text := 'insert into "' + AnsiLowerCase(localPath) + 'prixod.dbf" '
                             + '(BALS, NUMKCU, NAMEPR, MEI, EIZ, OPER, DATETR, NUMDOK, '
                             + 'NSD, DATSD, KP, POST, KOL, KOLOTG, "' + AnsiLowerCase(localPath)
                             + 'prixod.dbf"."MONEY", "' + AnsiLowerCase(localPath)
                             + 'prixod.dbf"."SUM", KPZ, REGNSF, KOLNEDN, KOLNEDS, '
                             + 'KOLMATPUT, SUMNEDN, SUMNEDS, SUMMATP, SKLAD, DEBDOP, '
-                            + 'KRDOP, PRIZVX, PRIZN, KREG, NP, KORR, WW1, SUMD, '
-                            + 'DOC_ID) values '
+                            + 'KRDOP, PRIZVX, PRIZN, KREG, NP, KORR, SUMD, '
+                            + 'DOC_ID, STRUK_ID, PRIXOD_ID) values '
                             + '(:BALS, :NUMKCU, :NAMEPR, :MEI, :EIZ, :OPER, :DATETR, '
                             + ':NUMDOK, :NSD, :DATSD, :KP, :POST, :KOL, :KOLOTG, '
                             + ':MONEY, :SUM, :KPZ, :REGNSF, :KOLNEDN, :KOLNEDS, '
                             + ':KOLMATPUT, :SUMNEDN, :SUMNEDS, :SUMMATP, :SKLAD, '
                             + ':DEBDOP, :KRDOP, :PRIZVX, :PRIZN, :KREG, :NP, :KORR, '
-                            + ':WW1, :SUMD, :DOC_ID) ';
+                            + ':SUMD, :DOC_ID, :STRUK_ID, :PRIXOD_ID) ';
   UpdPrih.DeleteSQL.Text := 'delete from "' + AnsiLowerCase(localPath) + 'prixod.dbf" '
-                            + 'where BALS = :OLD_BALS and NUMKCU = :OLD_NUMKCU and '
-                            + 'NP = :OLD_NP and DOC_ID = :OLD_DOC_ID ';
+                            + 'where PRIXOD_ID = :OLD_PRIXOD_ID ';
   UpdPrih.ModifySQL.Text := 'update "' +AnsiLowerCase(localPath) + 'prixod.dbf" '
                             + 'set BALS = :BALS, NUMKCU = :NUMKCU, NAMEPR = :NAMEPR, '
                             + 'MEI = :MEI, EIZ = :EIZ, OPER = :OPER, DATETR = :DATETR, '
@@ -603,9 +637,8 @@ begin
                             + 'SUMNEDN = :SUMNEDN, SUMNEDS = :SUMNEDS, SUMMATP = :SUMMATP, '
                             + 'SKLAD = :SKLAD, DEBDOP = :DEBDOP, KRDOP = :KRDOP, '
                             + 'PRIZVX = :PRIZVX, PRIZN = :PRIZN, KREG = :KREG, NP = :NP, '
-                            + 'KORR = :KORR, WW1 = :WW1, SUMD = :SUMD,  '
-                            + 'DOC_ID = :DOC_ID where BALS = :OLD_BALS and '
-                            + 'NUMKCU = :OLD_NUMKCU and NP = :OLD_NP and DOC_ID = :OLD_DOC_ID';
+                            + 'KORR = :KORR, SUMD = :SUMD,  '
+                            + 'DOC_ID = :DOC_ID, STRUK_ID = :STRUK_ID where PRIXOD_ID = :OLD_PRIXOD_ID ';
   Prih.Open;
   log^.appendMsg('Выбрали данные из приходов PRIXOD.dbf: ' + IntToStr(Prih.RecordCount));
 end;
@@ -617,17 +650,24 @@ begin
   RashDbf.DatabaseName := '';
   RashDbf.TableName := AnsiLowerCase(localPath) + 'rasxod.dbf';
   RashDbf.Open;
-  RashDbf.Filtered := false;
-  RashDbf.Filter := 'SKLAD = ' + stkod;
-  RashDbf.Filtered := true;
+  if (stkod <> '') then
+  begin
+    RashDbf.Filtered := false;
+    RashDbf.Filter := 'SKLAD = ' + stkod;
+    RashDbf.Filtered := true;
+  end;
   RashDbf.Last;
 end;
 
-procedure TDM.openRashDbfQuery(localPath, stkodRela, strukId, stkod : string);
+procedure TDM.openRashDbfQuery(localPath, stkodRela, strukId, stkod : string; iznos : boolean);
 begin
   Rash.Close;
-  Rash.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" rasxod '
-                        + 'where rasxod.doc_id <> 0 and rasxod.sklad = "' + stkodRela + '" ';
+  if (iznos) then
+    Rash.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" rasxod '
+                       + 'where rasxod.doc_id = -3 '
+  else
+    Rash.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" rasxod '
+                       + 'where rasxod.doc_id > 0 and rasxod.sklad = "' + stkodRela + '" ';
   if (stkodRela <> stkod) or (stkod = '1600') or (stkod = '4300') then
   	Rash.EhSQL.Text := Rash.EhSQL.Text + ' and rasxod.struk_id = "' + strukId + '" ';
   UpdRash.InsertSQL.Text := 'insert into "' + AnsiLowerCase(localPath) + 'rasxod.dbf" '
@@ -635,15 +675,14 @@ begin
                             + 'NUMDOK, CEX, POST, MOL, KOL, "' + AnsiLowerCase(localPath)
                             + 'rasxod.dbf"."MONEY", "' + AnsiLowerCase(localPath)
                             + 'rasxod.dbf"."SUM", KPZ, SKLAD, NACEN, DT1, KT1, SUM1, DT2, '
-                            + 'KT2, PRIZN, PRIZNVX, OTK, KT, NMASH, NP, KORR, SUMD, DOC_ID, STRUK_ID) '
+                            + 'KT2, PRIZN, PRIZNVX, OTK, KT, NMASH, NP, KORR, SUMD, DOC_ID, STRUK_ID, RASXOD_ID) '
                             + 'values (:DEBET, :BALS, :NUMKCU, :NAMEPR, :KEI, :EIZ, '
                             + ':OPER, :DATETR, :NUMDOK, :CEX, :POST, :MOL, :KOL, '
                             + ':MONEY, :SUM, :KPZ, :SKLAD, :NACEN, :DT1, :KT1, :SUM1, '
                             + ':DT2, :KT2, :PRIZN, :PRIZNVX, :OTK, :KT, :NMASH, :NP, '
-                            + ':KORR, :SUMD, :DOC_ID, :STRUK_ID) ';
+                            + ':KORR, :SUMD, :DOC_ID, :STRUK_ID, :RASXOD_ID) ';
   UpdRash.DeleteSQL.Text := 'delete from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" '
-                            + 'where BALS = :OLD_BALS and NUMKCU = :OLD_NUMKCU and '
-                            + 'NP = :OLD_NP and DOC_ID = :OLD_DOC_ID ';
+                            + 'where RASXOD_ID = :OLD_RASXOD_ID ';
   UpdRash.ModifySQL.Text := 'update "' +AnsiLowerCase(localPath) + 'rasxod.dbf" '
                             + 'set DEBET = :DEBET, BALS = :BALS, NUMKCU = :NUMKCU, '
                             + 'NAMEPR = :NAMEPR, KEI = :KEI, EIZ = :EIZ, OPER = :OPER, '
@@ -655,23 +694,25 @@ begin
                             + 'KT1 = :KT1, SUM1 = :SUM1, DT2 = :DT2, KT2 = :KT2, '
                             + 'PRIZN = :PRIZN, PRIZNVX = :PRIZNVX, OTK = :OTK, '
                             + 'KT = :KT, NMASH = :NMASH, NP = :NP, KORR = :KORR, '
-                            + 'SUMD = :SUMD, DOC_ID = :DOC_ID, STRUK_ID = :STRUK_ID where '
-                            + 'BALS = :OLD_BALS and NUMKCU = :OLD_NUMKCU and '
-                            + 'NP = :OLD_NP and DOC_ID = :OLD_DOC_ID ';
+                            + 'SUMD = :SUMD, DOC_ID = :DOC_ID, STRUK_ID = :STRUK_ID, RASXOD_ID = :RASXOD_ID where '
+                            + 'RASXOD_ID = :OLD_RASXOD_ID ';
   Rash.Open;
   log^.appendMsg('Выбрали данные из расходов RASXOD.dbf: ' + IntToStr(Rash.RecordCount));
 end;
 
-procedure TDM.activateNomenDbf(localPath, stkod : string; exclusive : boolean);
+procedure TDM.activateNomenDbf(localPath, stkod : string; exclusive : boolean; iznos : boolean);
 begin
   Nomen.Close;
   Nomen.Exclusive := exclusive;
   Nomen.DatabaseName := '';
   Nomen.TableName := AnsiLowerCase(localPath) + '\nomen.dbf';
   Nomen.Open;
-  Nomen.Filtered := false;
-  Nomen.Filter := 'SKLAD = ' + stkod;
-  Nomen.Filtered := true;
+  if (not iznos) then
+  begin
+    Nomen.Filtered := false;
+    Nomen.Filter := 'SKLAD = ' + stkod;
+    Nomen.Filtered := true;
+  end;
   Nomen.Last;
   fillNomenMem();
   log^.appendMsg('Выбрали данные из картотеки NOMEN.dbf.');
@@ -753,8 +794,7 @@ begin
   dm.KartRashQuery.ParamByName('struk_id').AsInteger := dm.ConfigUMCSTRUK_ID.AsInteger;
   dm.KartRashQuery.ParamByName('mes').AsInteger := curMonth;
   dm.KartRashQuery.ParamByName('god').AsInteger := curYear;
-  if (not vxControl) then
-    setKartRashQueryUsl;
+  setKartRashQueryUsl;
   dm.KartRashQuery.Open;
   dm.KartRashQuery.FetchAll;
   log^.appendMsg('Выбрали данные по расходам из IB kartRashQuery: ' + IntToStr(KartRashQuery.RecordCount));
@@ -973,10 +1013,84 @@ procedure TDM.setKartRashQueryUsl;
 begin
   KartRashQuery.Close;
   if (buxName = 'bm6') then
-    KartRashQuery.MacroByName('usl').AsString := 'document.tip_dok_id = 198'
+    KartRashQuery.MacroByName('usl').AsString := '(document.tip_dok_id in (173, 198) '
+                                                 + ' or (document.tip_op_id = 8 '
+                                                 + ' and document.tip_dok_id in (5, 183)'
+                                                 + ' and ostatki.account in (''10/10'', ''10/11''))) '
   else
     KartRashQuery.MacroByName('usl').AsString := 'tip_oper.gr_op_id = 2 and tip_oper.tip_op_id <> 135 '
-                                                 + ' and tip_oper.tip_op_id <> 153 and document.tip_dok_id <> 198';
+                                                 + ' and tip_oper.tip_op_id <> 153 '
+                                                 + ' and document.tip_dok_id <> 198 '
+                                                 + ' and document.tip_dok_id <> 173 '
+                                                 + ' and (ostatki.account <> ''10/10'' '
+                                                 + ' and ostatki.account <> ''10/11'') ';
+end;
+
+procedure TDM.setSpecOdezh(setSpecOdezh : boolean);
+begin
+  KartPrihQuery.Close;
+  if (setSpecOdezh) then
+  begin
+    KartPrihQuery.MacroByName('usl').AsString := ' (tip_oper.gr_op_id = 1 and '
+                                                 + ' document.tip_dok_id <> 187 '
+                                                 + ' and confPost.stkod like ''70%'''
+                                                 + ' or (tip_oper.tip_op_id = 153 '
+                                                 + ' and tipdok.tip_dok_id = 173)) '
+                                                 + ' and (ostatki.account = ''10/10'' '
+                                                 + ' or ostatki.account = ''10/11'') ';
+    KartPrihQuery.MacroByName('usl_doc').AsString := ' docosn.priz_id > 1 ';
+  end
+  else
+    KartPrihQuery.MacroByName('usl').AsString := ' tip_oper.gr_op_id = 1 '
+                                                 + 'and document.tip_op_id = 6 '
+                                                 + 'and document.tip_dok_id = 195 ';
+end;
+
+procedure TDM.setPrixodId;
+var
+  curId : integer;
+begin
+  curId := 0;
+  PrihDbf.First;
+  while (not PrihDbf.Eof) do
+  begin
+    Inc(curId);
+    PrihDbf.Edit;
+    PrihDbf.FieldByName('PRIXOD_ID').AsInteger := curId;
+    PrihDbf.Post;
+    PrihDbf.Next;
+  end;
+  maxPrId := curId;
+  PrihDbf.ApplyUpdates;
+  PrihDbf.CommitUpdates;
+end;
+
+procedure TDM.setRasxodId;
+var
+  curId : integer;
+begin
+  curId := 0;
+  RashDbf.First;
+  while (not RashDbf.Eof) do
+  begin
+    Inc(curId);
+    RashDbf.Edit;
+    RashDbf.FieldByName('RASXOD_ID').AsInteger := curId;
+    RashDbf.Post;
+    RashDbf.Next;
+  end;
+  maxRId := curId;
+  RashDbf.ApplyUpdates;
+  RashDbf.CommitUpdates;
+end;
+
+procedure TDM.openIznos(month, year, strukId : integer);
+begin
+  q_iznos.Close;
+  q_iznos.ParamByName('mes').AsInteger := month;
+  q_iznos.ParamByName('god').AsInteger := year;
+//  q_iznos.ParamByName('struk_id').AsInteger := strukId;
+  q_iznos.Open;
 end;
 
 end.

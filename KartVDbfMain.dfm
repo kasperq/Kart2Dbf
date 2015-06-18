@@ -2149,19 +2149,28 @@ object KartVDbfForm: TKartVDbfForm
     Left = 66
     Top = 144
     Width = 320
-    Height = 81
+    Height = 57
     Caption = #1044#1086#1079#1072#1087#1080#1089#1072#1090#1100' '#1056#1040#1057#1061#1054#1044#1067
     WordWrap = True
     OnClick = rashCopyBtnClick
   end
   object prihCopyBtn: TRxSpeedButton
     Left = 66
-    Top = 231
+    Top = 207
     Width = 320
-    Height = 67
+    Height = 50
     Caption = #1044#1086#1079#1072#1087#1080#1089#1072#1090#1100' '#1055#1056#1048#1061#1054#1044#1067
     WordWrap = True
     OnClick = prihCopyBtnClick
+  end
+  object btn_iznos: TRxSpeedButton
+    Left = 66
+    Top = 263
+    Width = 320
+    Height = 35
+    Caption = #1044#1086#1079#1072#1087#1080#1089#1072#1090#1100' '#1048#1047#1053#1054#1057
+    WordWrap = True
+    OnClick = btn_iznosClick
   end
   object buxNameCombo: TComboBox
     Left = 225
@@ -2368,12 +2377,21 @@ object KartVDbfForm: TKartVDbfForm
     OnClick = neobrRashBtnClick
   end
   object cb_vxControl: TCheckBox
-    Left = 148
-    Top = 320
-    Width = 161
+    Left = 108
+    Top = 304
+    Width = 245
     Height = 17
-    Caption = #1042#1093#1086#1076#1085#1086#1081' '#1082#1086#1085#1090#1088#1086#1083#1100
+    Caption = #1042#1093#1086#1076#1085#1086#1081' '#1082#1086#1085#1090#1088#1086#1083#1100' ('#1076#1083#1103' '#1088#1072#1089#1093#1086#1076#1072')'
     TabOrder = 13
     OnClick = cb_vxControlClick
+  end
+  object cb_specOdezh: TCheckBox
+    Left = 108
+    Top = 327
+    Width = 322
+    Height = 17
+    Caption = #1057#1095#1077#1090#1072' 10/10 '#1080' 10/11 ('#1076#1083#1103' '#1087#1088#1080#1093#1086#1076#1086#1074' '#1074' BM6)'
+    TabOrder = 14
+    OnClick = cb_specOdezhClick
   end
 end

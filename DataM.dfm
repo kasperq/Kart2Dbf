@@ -42,7 +42,7 @@ object DM: TDM
       
         'matrop.nmat namepr, matrop.nmats nameprs, matrop.xarkt, matrop.g' +
         'ost,'
-      'cast(iif(document.tip_op_id = 6, '#39'9'#39', '#39'1'#39') as char(2)) oper,'
+      'cast(iif(document.tip_op_id = 6, '#39'1'#39', '#39'9'#39') as char(2)) oper,'
       'document.date_op datetr,'
       'iif(document.tip_dok_id = 195,'
       '    confPost.stkod,'
@@ -61,9 +61,10 @@ object DM: TDM
       'ediz.neis eiz,'
       'iif(document.tip_op_id = 1, '
       '    substring(sprorg.nam from 1 for 35), '
-      '    iif(document.tip_dok_id = 195,'
-      '        confPost.stkod,'
+      '    iif(document.tip_dok_id = 195 ,'
+      '        confPost.stkod,           '
       '        struk.stname)) post,'
+      ''
       
         'substring(kart.stroka_id from char_length(kart.stroka_id)-3 for ' +
         'char_length(kart.stroka_id)) np, '
@@ -76,24 +77,26 @@ object DM: TDM
         'e, tip_oper.tip_op_id,'
       
         'tipdok.tip_dok_id, document.klient_id, struk.stname, struk.stkod' +
-        ', confPost.stkod'
+        ', confPost.stkod,'
+      'configumc.struk_id'
       'from document'
       ''
       'inner join kart on document.doc_id = kart.doc_id'
       'inner join matrop on kart.ksm_id = matrop.ksm_id'
       'inner join ediz on matrop.kei_id = ediz.kei_id'
-      'left join document docosn on document.dok_osn_id = docosn.doc_id'
+      
+        'left join document docosn on document.dok_osn_id = docosn.doc_id' +
+        ' and %usl_doc'
       'left join sprorg on document.klient_id = sprorg.kod'
       'left join struk on document.klient_id = struk.struk_id'
       'inner join configumc on document.struk_id = configumc.struk_id'
       'left join ostatki on kart.kart_id = ostatki.kart_id'
       'left join seria on ostatki.seria_id = seria.seria_id'
       
-        '--left join document doc_osn on document.dok_osn_id = doc_osn.do' +
-        'c_id'
+        'left join document doc_osn on document.dok_osn_id = doc_osn.doc_' +
+        'id'
       '--  and doc_osn.tip_op_id = 1 and doc_osn.tip_dok_id = 4'
       'left join tip_oper on tip_oper.tip_op_id = document.tip_op_id '
-      '                          and tip_oper.gr_op_id = 1'
       'left join tipdok on tipdok.tip_dok_id = document.tip_dok_id'
       
         'left join struk relaStr on relaStr.struk_id = configumc.rela_str' +
@@ -107,9 +110,20 @@ object DM: TDM
       'and document.priz_id > 1'
       'and extract(month from document.date_op) = :mes'
       'and extract(year from document.date_op) = :god'
-      ' and document.tip_op_id = 6'
-      'and document.tip_dok_id = 195')
-    Macros = <>
+      'and %usl')
+    Macros = <
+      item
+        DataType = ftWideString
+        Name = 'usl_doc'
+        ParamType = ptInput
+        Value = '0=0'
+      end
+      item
+        DataType = ftWideString
+        Name = 'usl'
+        ParamType = ptInput
+        Value = '0=0'
+      end>
     Left = 128
     Top = 8
     ParamData = <
@@ -307,6 +321,12 @@ object DM: TDM
       FixedChar = True
       Size = 4
     end
+    object KartPrihQuerySTRUK_ID: TSmallintField
+      FieldName = 'STRUK_ID'
+      Origin = '"CONFIGUMC"."STRUK_ID"'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
   end
   object DSKartIncomes: TDataSource
     DataSet = KartPrihQuery
@@ -370,7 +390,7 @@ object DM: TDM
   object DSPrixDbf: TDataSource
     DataSet = PrihDbf
     Left = 192
-    Top = 368
+    Top = 360
   end
   object PrihDbf: TTable
     CachedUpdates = True
@@ -405,15 +425,17 @@ object DM: TDM
       
         'matrop.nmat namepr, matrop.nmats nameprs, matrop.xarkt, matrop.g' +
         'ost,'
-      'cast(iif(document.tip_op_id in (85, 112, 113, 32, 103, 104),'
-      '         '#39'p'#39','
-      '         iif(document.tip_op_id = 131,'
-      '             '#39'2'#39','
       
-        '             iif(document.tip_op_id in (8, 9, 110, 140, 11, 147,' +
-        ' 78, 10, 105, 93, 135),'
-      '                 '#39'9'#39','
-      '                 '#39'1'#39'))) as char(2)) oper,'
+        'cast(iif(document.tip_op_id in (85, 112, 113, 32, 103, 104, 153)' +
+        ','
+      '            '#39'p'#39','
+      '            iif(document.tip_op_id = 131,'
+      '                '#39'2'#39','
+      
+        '                iif(document.tip_op_id in (8, 9, 110, 140, 11, 1' +
+        '47, 78, 10, 105, 93, 135),'
+      '                    '#39'9'#39','
+      '                    '#39'1'#39'))) as char(2)) oper,'
       'document.date_op datetr,'
       'substring(trim(document.ndok) from 1 for 5)  numndok,'
       
@@ -489,9 +511,9 @@ object DM: TDM
         'substring(kart.stroka_id from char_length(kart.stroka_id)-3 for ' +
         'char_length(kart.stroka_id)) np,'
       
-        'tip_oper.nam_op, tip_oper.tip_op_id, document.priz_id, document.' +
-        'doc_id, document.struk_id,'
-      'document.klient_id'
+        'tip_oper.nam_op, tipdok.name, tip_oper.tip_op_id, document.priz_' +
+        'id, document.doc_id, document.struk_id,'
+      'document.klient_id, document.tip_dok_id'
       ''
       'from document'
       ''
@@ -507,6 +529,7 @@ object DM: TDM
       'left join ostatki on kart.kart_id = ostatki.kart_id'
       'left join seria on ostatki.seria_id = seria.seria_id'
       'left join tip_oper on tip_oper.tip_op_id = document.tip_op_id'
+      'left join tipdok on tipdok.tip_dok_id = document.tip_dok_id'
       
         'left join struk relaStr on relaStr.struk_id = configumc.rela_str' +
         'uk_id'
@@ -699,6 +722,16 @@ object DM: TDM
     object KartRashQueryKLIENT_ID: TIntegerField
       FieldName = 'KLIENT_ID'
       Origin = '"DOCUMENT"."KLIENT_ID"'
+      Required = True
+    end
+    object KartRashQueryNAME: TIBStringField
+      FieldName = 'NAME'
+      Origin = '"TIPDOK"."NAME"'
+      Size = 50
+    end
+    object KartRashQueryTIP_DOK_ID: TSmallintField
+      FieldName = 'TIP_DOK_ID'
+      Origin = '"DOCUMENT"."TIP_DOK_ID"'
       Required = True
     end
   end
@@ -1566,6 +1599,8 @@ object DM: TDM
     Top = 112
   end
   object BlockSession: TSession
+    NetFileDir = 'C:\WORK'
+    PrivateDir = 'C:\WORK'
     SessionName = 'BlockSession'
     Left = 32
     Top = 160
@@ -1707,6 +1742,9 @@ object DM: TDM
     object RashSTRUK_ID: TSmallintField
       FieldName = 'STRUK_ID'
     end
+    object RashRASXOD_ID: TFloatField
+      FieldName = 'RASXOD_ID'
+    end
   end
   object UpdRash: TUpdateSQL
     ModifySQL.Strings = (
@@ -1792,26 +1830,19 @@ object DM: TDM
   object Prih: TERxQuery
     CachedUpdates = True
     SessionName = 'WorkSession'
+    ParamCheck = False
     SQL.Strings = (
       'select *'
       'from "f:\bm444\zerno1\prixod.dbf" prixod'
-      'where prixod.doc_id <> 0'
-      'and prixod.sklad = :stkod')
+      'where prixod.doc_id <> 0')
     UpdateObject = UpdPrih
     EhSQL.Strings = (
       'select *'
       'from "f:\bm444\zerno1\prixod.dbf" prixod'
-      'where prixod.doc_id <> 0'
-      'and prixod.sklad = :stkod')
+      'where prixod.doc_id <> 0')
     EhMacros = <>
     Left = 192
     Top = 264
-    ParamData = <
-      item
-        DataType = ftString
-        Name = 'stkod'
-        ParamType = ptInput
-      end>
     object PrihBALS: TStringField
       FieldName = 'BALS'
       Size = 5
@@ -1925,15 +1956,17 @@ object DM: TDM
       FieldName = 'KORR'
       Size = 1
     end
-    object PrihWW1: TStringField
-      FieldName = 'WW1'
-      Size = 1
-    end
     object PrihSUMD: TFloatField
       FieldName = 'SUMD'
     end
     object PrihDOC_ID: TFloatField
       FieldName = 'DOC_ID'
+    end
+    object PrihPRIXOD_ID: TFloatField
+      FieldName = 'PRIXOD_ID'
+    end
+    object PrihSTRUK_ID: TSmallintField
+      FieldName = 'STRUK_ID'
     end
   end
   object UpdPrih: TUpdateSQL
@@ -1972,10 +2005,10 @@ object DM: TDM
       '  KREG = :KREG,'
       '  NP = :NP,'
       '  KORR = :KORR,'
-      '  WW1 = :WW1,'
       '  SUMD = :SUMD,'
       '  SUMNDS = :SUMNDS,'
-      '  DOC_ID = :DOC_ID'
+      '  DOC_ID = :DOC_ID,'
+      '  STRUK_ID = :STRUK_ID'
       'where'
       '  BALS = :OLD_BALS and'
       '  NUMKCU = :OLD_NUMKCU and'
@@ -1993,7 +2026,7 @@ object DM: TDM
       
         '   SUMNEDN, SUMNEDS, SUMMATP, SKLAD, DEBDOP, KRDOP, PRIZVX, PRIZ' +
         'N, KREG, '
-      '   NP, KORR, WW1, SUMD, SUMNDS, DOC_ID)'
+      '   NP, KORR, SUMD, SUMNDS, DOC_ID, STRUK_ID)'
       'values'
       
         '  (:BALS, :NUMKCU, :NAMEPR, :MEI, :EIZ, :OPER, :DATETR, :NUMDOK,' +
@@ -2005,8 +2038,8 @@ object DM: TDM
         '   :KOLNEDS, :KOLMATPUT, :SUMNEDN, :SUMNEDS, :SUMMATP, :SKLAD, :' +
         'DEBDOP, '
       
-        '   :KRDOP, :PRIZVX, :PRIZN, :KREG, :NP, :KORR, :WW1, :SUMD, :SUM' +
-        'NDS, :DOC_ID)')
+        '   :KRDOP, :PRIZVX, :PRIZN, :KREG, :NP, :KORR, :SUMD, :SUMNDS, :' +
+        'DOC_ID, :STRUK_ID)')
     DeleteSQL.Strings = (
       'delete from "f:\bm444\zerno1\prixod.dbf"'
       'where'
@@ -2161,7 +2194,9 @@ object DM: TDM
     Top = 64
   end
   object maxPrihRegnsf: TERxQuery
+    CachedUpdates = True
     SessionName = 'WorkSession'
+    ParamCheck = False
     SQL.Strings = (
       'select max(prixod.regnsf) maxRegnsf'
       'from "f:\bm444\zerno1\prixod.dbf" prixod')
@@ -2333,6 +2368,163 @@ object DM: TDM
     end
     object NomenMemSRASXMD: TFloatField
       FieldName = 'SRASXMD'
+    end
+  end
+  object q_iznos: TRxIBQuery
+    Database = Belmed
+    Transaction = RTrans
+    BufferChunks = 1000
+    CachedUpdates = False
+    ParamCheck = True
+    SQL.Strings = (
+      
+        'select padleft(TRIM(cast(uslugi.tag as char(5))),7,'#39'0'#39') as numks' +
+        'u, matrop.nmat namepr,'
+      
+        'matrop.kei_id kei, ediz.neis eiz, cast('#39'1'#39' as char(1)) oper, doc' +
+        'ument.date_op datetr,'
+      
+        'substring(trim(document.ndok) from 1 for 5)  numndok, configumc.' +
+        'stkod cex,'
+      
+        'configumc.stkod post, cast(0 as numeric(15,6)) kol, uslugi.sum_d' +
+        'eb summa,'
+      
+        'document.doc_id, ostatki.struk_id, cast('#39'10/11'#39' as char(5)) bals' +
+        ','
+      
+        'rtrim(ltrim(rtrim(ltrim(uslugi.account)) || '#39'/'#39' || rtrim(ltrim(u' +
+        'slugi.sub_id)))) debet,'
+      'matrop.nmats nameprs, matrop.xarkt, matrop.gost,'
+      'iif(configumc.struk_id in (542, 543, 544, 545, 546, 708, -540), '
+      '    '#39'1600'#39','
+      '    iif(configumc.struk_id in (107,232,230,479),'
+      '        '#39'4300'#39','
+      '        configumc.stkod)) sklad'
+      'from document'
+      'inner join uslugi on uslugi.doc_id = document.doc_id'
+      'inner join matrop on matrop.ksm_id = uslugi.tag'
+      'inner join ediz on ediz.kei_id = matrop.kei_id'
+      'inner join ostatki on ostatki.kart_id = uslugi.kart_id'
+      'left join configumc on configumc.struk_id = ostatki.struk_id'
+      'where document.tip_dok_id = 180'
+      'and extract(month from document.date_op) = :mes'
+      'and extract(year from document.date_op) = :god')
+    Macros = <>
+    Left = 392
+    Top = 8
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'mes'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'god'
+        ParamType = ptUnknown
+      end>
+    object q_iznosNUMKSU: TIBStringField
+      FieldName = 'NUMKSU'
+      ProviderFlags = []
+      Size = 256
+    end
+    object q_iznosNAMEPR: TIBStringField
+      FieldName = 'NAMEPR'
+      Origin = '"MATROP"."NMAT"'
+      Size = 60
+    end
+    object q_iznosKEI: TSmallintField
+      FieldName = 'KEI'
+      Origin = '"MATROP"."KEI_ID"'
+    end
+    object q_iznosEIZ: TIBStringField
+      FieldName = 'EIZ'
+      Origin = '"EDIZ"."NEIS"'
+      FixedChar = True
+      Size = 10
+    end
+    object q_iznosOPER: TIBStringField
+      FieldName = 'OPER'
+      ProviderFlags = []
+      FixedChar = True
+      Size = 1
+    end
+    object q_iznosDATETR: TDateField
+      FieldName = 'DATETR'
+      Origin = '"DOCUMENT"."DATE_OP"'
+    end
+    object q_iznosNUMNDOK: TIBStringField
+      FieldName = 'NUMNDOK'
+      ProviderFlags = []
+    end
+    object q_iznosCEX: TIBStringField
+      FieldName = 'CEX'
+      Origin = '"CONFIGUMC"."STKOD"'
+      FixedChar = True
+      Size = 4
+    end
+    object q_iznosPOST: TIBStringField
+      FieldName = 'POST'
+      Origin = '"CONFIGUMC"."STKOD"'
+      FixedChar = True
+      Size = 4
+    end
+    object q_iznosKOL: TFMTBCDField
+      FieldName = 'KOL'
+      ProviderFlags = []
+      Precision = 18
+      Size = 6
+    end
+    object q_iznosSUMMA: TIBBCDField
+      FieldName = 'SUMMA'
+      Origin = '"USLUGI"."SUMMA_USLUGI"'
+      Precision = 18
+      Size = 2
+    end
+    object q_iznosSKLAD: TIBStringField
+      FieldName = 'SKLAD'
+      Origin = '"CONFIGUMC"."STKOD"'
+      FixedChar = True
+      Size = 4
+    end
+    object q_iznosDOC_ID: TIntegerField
+      FieldName = 'DOC_ID'
+      Origin = '"DOCUMENT"."DOC_ID"'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object q_iznosSTRUK_ID: TIntegerField
+      FieldName = 'STRUK_ID'
+      Origin = '"OSTATKI"."STRUK_ID"'
+      Required = True
+    end
+    object q_iznosBALS: TIBStringField
+      FieldName = 'BALS'
+      Origin = '"MATROP"."ACCOUNT"'
+      FixedChar = True
+      Size = 5
+    end
+    object q_iznosDEBET: TIBStringField
+      FieldName = 'DEBET'
+      ProviderFlags = []
+      Size = 256
+    end
+    object q_iznosNAMEPRS: TIBStringField
+      FieldName = 'NAMEPRS'
+      Origin = '"MATROP"."NMATS"'
+      FixedChar = True
+      Size = 25
+    end
+    object q_iznosXARKT: TIBStringField
+      FieldName = 'XARKT'
+      Origin = '"MATROP"."XARKT"'
+      Size = 30
+    end
+    object q_iznosGOST: TIBStringField
+      FieldName = 'GOST'
+      Origin = '"MATROP"."GOST"'
+      Size = 60
     end
   end
 end

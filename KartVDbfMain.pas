@@ -31,6 +31,8 @@ type
     strkCombo: TComboBox;
     neobrRashBtn: TButton;
     cb_vxControl: TCheckBox;
+    cb_specOdezh: TCheckBox;
+    btn_iznos: TRxSpeedButton;
     procedure FormShow(Sender: TObject);
     procedure curMonthComboChange(Sender: TObject);
     procedure curMonthEditChange(Sender: TObject);
@@ -50,6 +52,8 @@ type
     procedure buxNameComboChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cb_vxControlClick(Sender: TObject);
+    procedure cb_specOdezhClick(Sender: TObject);
+    procedure btn_iznosClick(Sender: TObject);
 
   private
     procedure copyKartVDbf(copyObjects : word; sender : string);   // 0 - all; 1 - prih; 2 - rash
@@ -62,6 +66,7 @@ type
     procedure setPathStrings;
     procedure copyPrih(copyObjects : integer);
     procedure copyRash(copyObjects : integer);
+    procedure copyIznos(copyObjects : integer);
 
     var
       newFilePath, oldFilePath, localDirPath : string;
@@ -71,6 +76,7 @@ type
 
   public
     function addKartRec2NomenDbf(kartType: string; numkcu, sklad, bals: string) : boolean;
+    function addIznosRec2NomenDbf(kartType: string; numkcu, sklad, bals: string) : boolean;
 
     function setMaxRegnsf() : boolean;
     function addKartPrih2PrihAndNomenDbf() : boolean;
@@ -78,7 +84,9 @@ type
     function savePrihAndNomen(copyObjects : integer) : boolean;
 
     function addKartRashRecs2RashAndNomenDbf() : boolean;
+    function addIznos2RashAndNomenDbf() : boolean;
     procedure appendKartRashRec2RashDbfRec;
+    procedure appendIznosRec2RashDbfRec;
     function saveOldFiles() : boolean;
     procedure fillMachineList(combo : TComboBox);
 
@@ -152,10 +160,16 @@ begin
   newFilePath := dm.diskPath + buxNameCombo.Text + '\zerno1\' + getCurrentDateTimeString() + '\';
 end;
 
+procedure TKartVDbfForm.cb_specOdezhClick(Sender: TObject);
+begin
+  log.appendMsg('Счета 10/10 и 10/11');
+  dm.setSpecOdezh(cb_specOdezh.Checked);
+end;
+
 procedure TKartVDbfForm.cb_vxControlClick(Sender: TObject);
 begin
   log.appendMsg('Входной контроль');
-  dm.setVxodControlRashQuery(cb_vxControl.Checked);  
+  dm.setVxodControlRashQuery(cb_vxControl.Checked);
 end;
 
 function TKartVDbfForm.copyDbfToLocalDir() : boolean;
@@ -316,6 +330,28 @@ begin
                          dm.KartRashQueryMEI.AsString, dm.KartRashQuerySKLAD.AsString,
                          dm.KartRashQueryEIZ.AsString, dm.KartRashQueryDATETR.AsDateTime)) then
         addKartRec2NomenDbf := addKartRec2NomenDbf(kartType, numkcu, sklad, bals);
+  end;
+end;
+
+function TKartVDbfForm.addIznosRec2NomenDbf(kartType: string;
+                                            numkcu, sklad, bals: string) : boolean;
+begin
+  result := false;
+  if (dm.NomenMemLocate(numkcu, sklad, bals)) then
+  begin
+    result := dm.editNomenRec(kartType, IntToStr(curMonth), IntToStr(curYear), buxNameCombo.Text,
+                              dm.q_iznosKOL.AsFloat,
+                              dm.q_iznosSUMMA.AsFloat,
+                              dm.q_iznosSUMMA.AsFloat);
+  end
+  else
+  begin
+    if (dm.appendNomen(dm.q_iznosBALS.AsString, dm.q_iznosNUMKSU.AsString,
+                       dm.q_iznosNAMEPR.AsString, dm.q_iznosNAMEPRS.AsString,
+                       dm.q_iznosXARKT.AsString, dm.q_iznosGOST.AsString,
+                       dm.q_iznosKEI.AsString, dm.q_iznosSKLAD.AsString,
+                       dm.q_iznosEIZ.AsString, dm.q_iznosDATETR.AsDateTime)) then
+        addIznosRec2NomenDbf := addIznosRec2NomenDbf(kartType, numkcu, sklad, bals);
   end;
 end;
 
@@ -486,6 +522,70 @@ begin
   end;
 end;
 
+function TKartVDbfForm.addIznos2RashAndNomenDbf() : boolean;
+var
+  somethingAdded : boolean;
+begin
+  result := false;
+  somethingAdded := false;
+  if (dm.q_iznos.Active) and (dm.q_iznos.RecordCount > 0) then
+  begin
+    log.appendMsg('Начинаем добавление расходов.');
+    dm.q_iznos.First;
+    while (not dm.q_iznos.Eof) do
+    begin
+      if (addIznosRec2NomenDbf('RASX',
+                               dm.q_iznosNUMKSU.AsString,
+                               dm.q_iznosSKLAD.AsString,
+                               dm.q_iznosBALS.AsString)) then
+      begin
+        appendIznosRec2RashDbfRec;
+        somethingAdded := true;
+      end;
+      dm.q_iznos.Next;
+    end;
+    log.appendMsg('Добавление завершено');
+    if (somethingAdded) then
+    begin
+      log.appendMsg('Сохранение NOMEN.dbf');
+      if (dm.saveNomenMemToNomen()) then
+      begin
+        dm.Nomen.ApplyUpdates;
+        dm.Nomen.CommitUpdates;
+        DbiPackTable(dm.Nomen.dbhandle, dm.Nomen.Handle, nil, nil, false);
+        dm.Nomen.Close
+      end;
+      log.appendMsg('Сохранение RASXOD.dbf');
+      dm.Rash.ApplyUpdates;
+      dm.Rash.CommitUpdates;
+      dm.Rash.Close;
+      dm.WorkSession.Active := false;
+      dm.WorkSession.Active := true;
+      dm.activateRashDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true);
+      DbiPackTable(dm.RashDbf.dbhandle, dm.RashDbf.Handle, nil, nil, false);
+      dm.RashDbf.Close;
+      log.appendMsg('Сохранено.');
+      if (copyDbfToNetDir()) then
+        result := true;
+    end
+    else
+    begin
+      freeSplash;
+      if (dm.NesootvTbl.RecordCount > 0) then
+      begin
+        log.appendMsg('Недобавленные расходы: ' + IntToStr(dm.NesootvTbl.RecordCount));
+        dm.saveNesootvTbl;
+      end;
+      ShowMessage('Ни один расход не добавлен, т.к. не хватает количества на карточках.');
+    end;
+  end
+  else
+  begin
+    freeSplash;
+    ShowMessage('Нет данных по расходам для добавления.');
+  end;
+end;
+
 procedure TKartVDbfForm.appendKartPrihRec2PrihDbfRec;
 begin
   dm.Prih.Append;
@@ -513,6 +613,9 @@ begin
   dm.PrihPRIZN.AsString := 'n';
   dm.PrihSUMD.AsString := dm.KartPrihQuerySUMMA_S_NDS.AsString;
   dm.PrihDOC_ID.AsString := dm.KartPrihQueryDOC_ID.AsString;
+  dm.PrihSTRUK_ID.AsString := dm.KartPrihQuerySTRUK_ID.AsString;
+  dm.maxPrId := dm.maxPrId + 1;
+  dm.PrihPRIXOD_ID.AsString := IntToStr(dm.maxPrId);
   dm.Prih.Post;
 end;
 
@@ -540,7 +643,50 @@ begin
   if (dm.ConfigUMCSTKODRELA.AsString <> dm.ConfigUMCSTKOD.AsString)
      or (dm.ConfigUMCSTKOD.AsString = '1600') or (dm.ConfigUMCSTKOD.AsString = '4300') then
 	  dm.RashSTRUK_ID.AsString := dm.KartRashQuerySTRUK_ID.AsString;
+  dm.maxRId := dm.maxRId + 1;
+  dm.RashRASXOD_ID.AsString := IntToStr(dm.maxRId);
   dm.Rash.Post;
+end;
+
+procedure TKartVDbfForm.appendIznosRec2RashDbfRec;
+begin
+  dm.Rash.Append;
+  dm.RashBALS.AsString := dm.q_iznosBALS.AsString;
+  dm.RashDEBET.AsString := dm.q_iznosDEBET.AsString;
+  dm.RashNUMKCU.AsString := dm.q_iznosNUMKSU.AsString;
+  dm.RashNAMEPR.AsString := dm.q_iznosNAMEPR.AsString;
+  dm.RashKEI.AsString := dm.q_iznosKEI.AsString;
+  dm.RashOPER.AsString := dm.q_iznosOPER.AsString;
+  dm.RashDATETR.AsString := dm.q_iznosDATETR.AsString;
+  dm.RashEIZ.AsString := dm.q_iznosEIZ.AsString;
+  dm.RashNUMDOK.AsString := dm.q_iznosNUMNDOK.AsString;
+  dm.RashSKLAD.AsString := dm.q_iznosSKLAD.AsString;
+  dm.RashKOL.AsString := dm.q_iznosKOL.AsString;
+  dm.RashPOST.AsString := dm.q_iznosPOST.AsString;
+  dm.RashNP.AsString := '';
+  dm.RashMONEY.AsString := '';
+  dm.RashSUMD.AsString := dm.q_iznosSUMMA.AsString;
+  dm.RashSUM.AsString := dm.q_iznosSUMMA.AsString;
+  dm.RashCEX.AsString := dm.q_iznosCEX.AsString;
+  dm.RashDOC_ID.AsString := '-3';
+  if (dm.ConfigUMCSTKODRELA.AsString <> dm.ConfigUMCSTKOD.AsString)
+     or (dm.ConfigUMCSTKOD.AsString = '1600') or (dm.ConfigUMCSTKOD.AsString = '4300') then
+	  dm.RashSTRUK_ID.AsString := dm.q_iznosSTRUK_ID.AsString;
+  dm.maxRId := dm.maxRId + 1;
+  dm.RashRASXOD_ID.AsString := IntToStr(dm.maxRId);
+  dm.Rash.Post;
+end;
+
+procedure TKartVDbfForm.btn_iznosClick(Sender: TObject);
+begin
+  if (dm.checkBuxStruks(dm.ConfigUMCSTRUK_ID.AsInteger, AnsiLowerCase(buxNameCombo.Text))) then
+    copyKartVDbf(3, 'iznosCopyBtn')
+  else
+  begin
+    if (MessageDlg('Выбранный бухгалтер не ведет данное подразделение. Все равно продолжить?',
+        mtWarning, [mbYes, mbNo], 0) = mrYes) then
+      copyKartVDbf(3, 'iznosCopyBtn');
+  end;
 end;
 
 procedure TKartVDbfForm.allCopyBtnClick(Sender: TObject);
@@ -548,7 +694,7 @@ begin
   copyKartVDbf(0, 'allCopyBtnClick');
 end;
 
-procedure TKartVDbfForm.copyKartVDbf(copyObjects : word; sender : string);   // 0 - all; 1 - prih; 2 - rash
+procedure TKartVDbfForm.copyKartVDbf(copyObjects : word; sender : string);   // 0 - all; 1 - prih; 2 - rash; 3 - iznos
 begin
   if (splsh = nil) then
     splsh := TFSplash.Create(Application);
@@ -566,6 +712,12 @@ begin
   deleting := false;
   try
     setPathStrings;
+    dm.activatePrihDbf(oldFilePath, '', true);
+    dm.setPrixodId;
+    dm.PrihDbf.Close;
+    dm.activateRashDbf(oldFilePath, '', true);
+    dm.setRasxodId;
+    dm.RashDbf.Close;
     if (saveOldFiles()) and (copyDbfToLocalDir()) then
     begin
       splsh.showSplash('Сохранение данных. Подождите, пожалуйста...');
@@ -577,6 +729,9 @@ begin
 
       if (copyObjects = 0) or (copyObjects = 2) then
         copyRash(copyObjects);
+
+      if (copyObjects = 0) or (copyObjects = 3) then
+        copyIznos(copyObjects);
     end;
   except
     on e : exception do
@@ -588,10 +743,11 @@ begin
         dm.KartPrihQuery.Close;
         dm.Prih.Close;
       end;
-      if (copyObjects = 0) or (copyObjects = 2) then
+      if (copyObjects = 0) or (copyObjects = 2) or (copyObjects = 3) then
       begin
         dm.Rash.CancelUpdates;
         dm.KartRashQuery.Close;
+        dm.q_iznos.close;
         dm.Rash.Close;
       end;
       dm.Nomen.CancelUpdates;
@@ -608,9 +764,13 @@ end;
 
 procedure TKartVDbfForm.copyPrih(copyObjects : integer);
 begin
+  if (cb_specOdezh.Checked) then
+    log.appendMsg('Счета 10/10 и 10/11');
+
   log.appendMsg('Начинаем копирование приходов.');
-  dm.openPrihDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString);
-  dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true);
+  dm.openPrihDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
+                      dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString);
+  dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false);
   dm.restoreNomenForPrih(curMonth, curYear, buxNameCombo.Text);
   dm.clearPrih;
   dm.activateKartPrihQuery(curMonthEdit.Value, curYearEdit.Value);
@@ -636,12 +796,26 @@ begin
     log.appendMsg('Входной контроль.');
   log.appendMsg('Начинаем копирование расходов.');
   dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
-                      dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString);
-  dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true);
+                      dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString, false);
+  dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false);
   dm.restoreNomenForRash(curMonth, curYear, buxNameCombo.Text);
   dm.clearRash;
   dm.activateKartRashQuery(curMonthEdit.Value, curYearEdit.Value);
   if (addKartRashRecs2RashAndNomenDbf()) then
+    copyingSucceded;
+  dm.Rash.Close;
+end;
+
+procedure TKartVDbfForm.copyIznos(copyObjects : integer);
+begin
+  log.appendMsg('Начинаем копирование износа.');
+  dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
+                      dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString, true);
+  dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, true);
+  dm.restoreNomenForRash(curMonth, curYear, buxNameCombo.Text);
+  dm.clearRash;
+  dm.openIznos(curMonthEdit.Value, curYearEdit.Value, dm.ConfigUMCSTRUK_ID.AsInteger);
+  if (addIznos2RashAndNomenDbf()) then
     copyingSucceded;
   dm.Rash.Close;
 end;
@@ -704,6 +878,8 @@ procedure TKartVDbfForm.buxNameComboChange(Sender: TObject);
 begin
   setPathStrings;
   dm.setBuxName(AnsiLowerCase(buxNameCombo.Text));
+  if (dm.buxName  = 'bm6') and (cb_specOdezh.Visible) then
+    cb_specOdezh.Checked := true;
 end;
 
 procedure TKartVDbfForm.lastNeobrRashBtnClick(Sender: TObject);
@@ -755,6 +931,8 @@ var
 begin
   prihCopyBtn.Visible := DM.showPrih;
   cb_vxControl.Visible := dm.showPrih;
+  cb_specOdezh.Visible := dm.showPrih;
+  btn_iznos.Visible := dm.showPrih;
   DecodeDate(Now, year, month, day);
   if (month = 1) then
   begin
@@ -774,6 +952,7 @@ begin
 //  dm.diskPath := 'd';
   dm.diskPath := 'f';
   dm.setVxodControlRashQuery(cb_vxControl.Checked);
+  dm.setSpecOdezh(cb_specOdezh.Checked);
   setPathStrings;
 end;
 
