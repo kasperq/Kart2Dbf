@@ -42,7 +42,7 @@ object DM: TDM
       
         'matrop.nmat namepr, matrop.nmats nameprs, matrop.xarkt, matrop.g' +
         'ost,'
-      'cast(iif(document.tip_op_id = 6, '#39'1'#39', '#39'9'#39') as char(2)) oper,'
+      'cast(iif(document.tip_op_id = 6, '#39'9'#39', '#39'1'#39') as char(2)) oper,'
       'document.date_op datetr,'
       'iif(document.tip_dok_id = 195,'
       '    confPost.stkod,'
