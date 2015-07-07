@@ -794,7 +794,8 @@ begin
   dm.KartRashQuery.ParamByName('struk_id').AsInteger := dm.ConfigUMCSTRUK_ID.AsInteger;
   dm.KartRashQuery.ParamByName('mes').AsInteger := curMonth;
   dm.KartRashQuery.ParamByName('god').AsInteger := curYear;
-  setKartRashQueryUsl;
+  if (not vxControl) then
+    setKartRashQueryUsl;
   dm.KartRashQuery.Open;
   dm.KartRashQuery.FetchAll;
   log^.appendMsg('Выбрали данные по расходам из IB kartRashQuery: ' + IntToStr(KartRashQuery.RecordCount));
