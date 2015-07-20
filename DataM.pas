@@ -64,25 +64,6 @@ type
     NesootvTbl: TRxIBQuery;
     NesootvTblUpd: TIBUpdateSQLW;
     WTrans: TIBTransaction;
-    NesootvTblNEDOBAVRASH_ID: TIntegerField;
-    NesootvTblSKLAD: TIBStringField;
-    NesootvTblACCOUNT: TIBStringField;
-    NesootvTblDEBET: TIBStringField;
-    NesootvTblMES: TSmallintField;
-    NesootvTblGOD: TIntegerField;
-    NesootvTblSTRUK_ID: TIntegerField;
-    NesootvTblNUMKSU: TIBStringField;
-    NesootvTblNAMEPR: TIBStringField;
-    NesootvTblOPER: TIBStringField;
-    NesootvTblDATETR: TDateField;
-    NesootvTblNUMNDOK: TIBStringField;
-    NesootvTblKOL: TFMTBCDField;
-    NesootvTblMEI: TIBStringField;
-    NesootvTblCEX: TIBStringField;
-    NesootvTblPOST: TIBStringField;
-    NesootvTblNP: TIntegerField;
-    NesootvTblMONEY: TFMTBCDField;
-    NesootvTblMACHINE: TIBStringField;
     BlockSession: TSession;
     Rash: TERxQuery;
     UpdRash: TUpdateSQL;
@@ -275,6 +256,29 @@ type
     q_iznosXARKT: TIBStringField;
     q_iznosGOST: TIBStringField;
     RashRASXOD_ID: TFloatField;
+    RashInd: TTable;
+    NesootvTblNEDOBAVRASH_ID: TIntegerField;
+    NesootvTblSKLAD: TIBStringField;
+    NesootvTblACCOUNT: TIBStringField;
+    NesootvTblDEBET: TIBStringField;
+    NesootvTblMES: TSmallintField;
+    NesootvTblGOD: TIntegerField;
+    NesootvTblSTRUK_ID: TIntegerField;
+    NesootvTblNUMKSU: TIBStringField;
+    NesootvTblNAMEPR: TIBStringField;
+    NesootvTblOPER: TIBStringField;
+    NesootvTblDATETR: TDateField;
+    NesootvTblNUMNDOK: TIBStringField;
+    NesootvTblKOL: TFMTBCDField;
+    NesootvTblMEI: TIBStringField;
+    NesootvTblCEX: TIBStringField;
+    NesootvTblPOST: TIBStringField;
+    NesootvTblNP: TIntegerField;
+    NesootvTblMONEY: TFMTBCDField;
+    NesootvTblMACHINE: TIBStringField;
+    NesootvTblDATE_TIME_UPDATE: TDateTimeField;
+    NesootvTblUSER_NAME: TIBStringField;
+    NesootvTblSUMMA: TFMTBCDField;
     procedure DataModuleDestroy(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
 
@@ -296,7 +300,7 @@ type
     procedure clearNesootvTbl;
     procedure addValues2NesootvTbl(sklad, numkcu, namepr, oper, datetr, numndok,
                                    kol, mei, cex, post, bals, debet, mes, god, money,
-                                   np, strukId, buxName : string);
+                                   np, strukId, buxName, summa : string);
 
     function editNomenRec(kartType, mes, god, buxName: string; kol, summa, sumSNds : double) : boolean;
     function appendNomen(bals, numkcu, namepr, nameprs, xarkt, gost, eip,
@@ -315,6 +319,7 @@ type
     procedure openRashOldDbf(localPath : string; exclusive : boolean);
     procedure openRashDbfQuery(localPath, stkodRela, strukId, stkod : string; iznos : boolean);
     procedure activateRashDbf(localPath, stkod : string; exclusive : boolean);
+    procedure activateRashInd(localPath : string);
     procedure activateKartRashQuery(curMonth : integer; curYear : integer);
     procedure clearRash;
     procedure restoreNomenForRash(curMonth, curYear : integer; buxName : string);
@@ -400,7 +405,7 @@ end;
 
 procedure TDM.addValues2NesootvTbl(sklad, numkcu, namepr, oper, datetr, numndok,
                                    kol, mei, cex, post, bals, debet, mes, god,
-                                   money, np, strukId, buxName : string);
+                                   money, np, strukId, buxName, summa : string);
 begin
   addNedobavProc.StoredProcName := 'ADD_K2D_NEDOBAV_RASH';
   addNedobavProc.ExecProc;
@@ -425,6 +430,7 @@ begin
   NesootvTblMONEY.AsString := money;
   NesootvTblSTRUK_ID.AsString := strukId;
   NesootvTblMACHINE.AsString := buxName;
+  NesootvTblSUMMA.AsString := summa;
   NesootvTbl.Post;
 end;
 
@@ -469,14 +475,23 @@ end;
 function TDM.editNomenRec(kartType, mes, god, buxName: string; kol, summa, sumSNds : double) : boolean;
 var
   znak, znakVosst : integer;
+  iznos : boolean;
 begin
   result := false;
+  iznos := false;
   if (NomenMem.Active) then
   begin
     znak := 0;
     znakVosst := 1;
-    if (kartType = 'RASX') then    // если добавляем расходы в номен
+    if (kartType = 'RASX') or (kartType = 'IZNOS') then    // если добавляем расходы в номен
+    begin
       znak := -1;               // чтобы знак был -
+      if (kartType = 'IZNOS') then
+      begin
+        iznos := true;
+        kartType := 'RASX';
+      end;
+    end;
     if (kartType = 'PRIX') then    // если добавляем приходы в номен
       znak := 1;              // чтобы знак был с +
     if (kartType = 'RASXR') then
@@ -493,7 +508,8 @@ begin
     end;
 
     try
-      if (NomenMem.FieldByName('KOL').AsFloat + znak * kol >= 0) then     // если достаточно количества на карточке
+      if (NomenMem.FieldByName('KOL').AsFloat + znak * kol >= 0)
+         or (iznos) then     // если достаточно количества на карточке
       begin
         NomenMem.Edit;
         NomenMem.FieldByName('KOL').AsFloat := StrToFloat(NomenMem.FieldByName('KOL').AsString)
@@ -529,7 +545,7 @@ begin
                              KartRashQueryCEX.AsString, KartRashQueryPOST.AsString,
                              NomenMem.FieldByName('BALS').AsString, KartRashQueryDEBET.AsString, mes, god,
                              KartRashQueryMONEY.AsString, KartRashQueryNP.AsString,
-                             ConfigUMCSTRUK_ID.AsString, buxName);
+                             ConfigUMCSTRUK_ID.AsString, buxName, FloatToStr(summa));
       end;
     except
       on e : exception do
@@ -657,6 +673,16 @@ begin
     RashDbf.Filtered := true;
   end;
   RashDbf.Last;
+end;
+
+procedure TDM.activateRashInd(localPath : string);
+begin
+  RashInd.Close;
+  RashInd.Exclusive := false;
+  RashInd.DatabaseName := '';
+  RashInd.TableName := AnsiLowerCase(localPath) + 'rasxod.dbf';
+  RashInd.Open;
+  RashInd.Last;
 end;
 
 procedure TDM.openRashDbfQuery(localPath, stkodRela, strukId, stkod : string; iznos : boolean);
@@ -1071,18 +1097,20 @@ var
   curId : integer;
 begin
   curId := 0;
-  RashDbf.First;
-  while (not RashDbf.Eof) do
+  RashInd.First;
+  while (not RashInd.Eof) do
   begin
     Inc(curId);
-    RashDbf.Edit;
-    RashDbf.FieldByName('RASXOD_ID').AsInteger := curId;
-    RashDbf.Post;
-    RashDbf.Next;
+    RashInd.Edit;
+    RashInd.FieldByName('RASXOD_ID').AsInteger := curId;
+    RashInd.Post;
+    RashInd.Next;
   end;
+  log.appendMsg('переиндексация Rash.dbf завершена');
   maxRId := curId;
-  RashDbf.ApplyUpdates;
-  RashDbf.CommitUpdates;
+  RashInd.ApplyUpdates;
+  RashInd.CommitUpdates;
+  log.appendMsg('сохранили Rash.dbf');
 end;
 
 procedure TDM.openIznos(month, year, strukId : integer);

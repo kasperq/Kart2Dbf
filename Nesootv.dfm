@@ -1,6 +1,7 @@
 object FNesootv: TFNesootv
   Left = 0
   Top = 0
+  ActiveControl = DBGridEh1
   Caption = #1053#1077#1086#1073#1088#1072#1073#1086#1090#1072#1085#1085#1099#1077' '#1088#1072#1089#1093#1086#1076#1099
   ClientHeight = 477
   ClientWidth = 806
@@ -74,6 +75,12 @@ object FNesootv: TFNesootv
         MaxWidth = 70
         MinWidth = 70
         Width = 70
+      end
+      item
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'SUMMA'
+        Footers = <>
       end
       item
         DynProps = <>

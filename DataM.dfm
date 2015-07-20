@@ -73,8 +73,8 @@ object DM: TDM
         'numeric(15,6)) as summa,'
       'kart.summa_s_nds,'
       
-        'document.nds, ostatki.account, tip_oper.nam_op, tipdok.short_nam' +
-        'e, tip_oper.tip_op_id,'
+        'document.nds, kart.credit account, tip_oper.nam_op, tipdok.short' +
+        '_name, tip_oper.tip_op_id,'
       
         'tipdok.tip_dok_id, document.klient_id, struk.stname, struk.stkod' +
         ', confPost.stkod,'
@@ -760,8 +760,8 @@ object DM: TDM
     PreviewOptions.Zoom = 1.000000000000000000
     PrintOptions.Printer = #1055#1086' '#1091#1084#1086#1083#1095#1072#1085#1080#1102
     PrintOptions.PrintOnSheet = 0
-    ReportOptions.CreateDate = 41591.709345694440000000
-    ReportOptions.LastChange = 41591.723512905090000000
+    ReportOptions.CreateDate = 41591.709345694400000000
+    ReportOptions.LastChange = 42205.606100115740000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       'begin'
@@ -792,7 +792,7 @@ object DM: TDM
       object ReportTitle1: TfrxReportTitle
         FillType = ftBrush
         Height = 22.677180000000000000
-        Top = 18.897650000000000000
+        Top = 16.000000000000000000
         Width = 1046.929810000000000000
         object Memo1: TfrxMemoView
           Align = baCenter
@@ -815,10 +815,10 @@ object DM: TDM
       object Header1: TfrxHeader
         FillType = ftBrush
         Height = 18.897650000000000000
-        Top = 102.047310000000000000
+        Top = 100.000000000000000000
         Width = 1046.929810000000000000
         object Memo15: TfrxMemoView
-          Width = 68.031540000000010000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -835,8 +835,8 @@ object DM: TDM
           ParentFont = False
         end
         object Memo16: TfrxMemoView
-          Left = 68.031540000000010000
-          Width = 68.031540000000010000
+          Left = 68.031540000000000000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -854,7 +854,7 @@ object DM: TDM
         end
         object Memo17: TfrxMemoView
           Left = 136.063080000000000000
-          Width = 257.008040000000000000
+          Width = 169.008040000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -871,8 +871,8 @@ object DM: TDM
           ParentFont = False
         end
         object Memo18: TfrxMemoView
-          Left = 393.071120000000000000
-          Width = 68.031540000000010000
+          Left = 305.071120000000000000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -889,8 +889,8 @@ object DM: TDM
           ParentFont = False
         end
         object Memo19: TfrxMemoView
-          Left = 461.102660000000000000
-          Width = 68.031540000000010000
+          Left = 373.102660000000000000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -907,7 +907,7 @@ object DM: TDM
           ParentFont = False
         end
         object Memo20: TfrxMemoView
-          Left = 529.134199999999900000
+          Left = 441.134200000000000000
           Width = 49.133890000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
@@ -925,8 +925,8 @@ object DM: TDM
           ParentFont = False
         end
         object Memo21: TfrxMemoView
-          Left = 578.268090000000000000
-          Width = 68.031540000000010000
+          Left = 490.268090000000000000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -944,7 +944,7 @@ object DM: TDM
         end
         object Memo22: TfrxMemoView
           Left = 714.331170000000000000
-          Width = 68.031540000000010000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -980,7 +980,7 @@ object DM: TDM
         end
         object Memo24: TfrxMemoView
           Left = 842.835190000000000000
-          Width = 68.031540000000010000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -1016,7 +1016,7 @@ object DM: TDM
         end
         object Memo26: TfrxMemoView
           Left = 646.299630000000000000
-          Width = 68.031540000000010000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -1032,18 +1032,36 @@ object DM: TDM
             #1045#1076'.'#1080#1079#1084'.')
           ParentFont = False
         end
+        object Memo27: TfrxMemoView
+          Left = 558.000000000000000000
+          Width = 88.031540000000000000
+          Height = 18.897650000000000000
+          StretchMode = smMaxHeight
+          DataSet = frxDBDataset1
+          DataSetName = 'frxDBDataset1'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            #1057#1091#1084#1084#1072)
+          ParentFont = False
+        end
       end
       object MasterData1: TfrxMasterData
         FillType = ftBrush
         Height = 18.897650000000000000
-        Top = 143.622140000000000000
+        Top = 140.000000000000000000
         Width = 1046.929810000000000000
         DataSet = frxDBDataset1
         DataSetName = 'frxDBDataset1'
         RowCount = 0
         Stretched = True
         object Memo3: TfrxMemoView
-          Width = 68.031540000000010000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataField = 'SKLAD'
@@ -1061,8 +1079,8 @@ object DM: TDM
           ParentFont = False
         end
         object Memo4: TfrxMemoView
-          Left = 68.031540000000010000
-          Width = 68.031540000000010000
+          Left = 68.031540000000000000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -1080,7 +1098,7 @@ object DM: TDM
         end
         object Memo5: TfrxMemoView
           Left = 136.063080000000000000
-          Width = 257.008040000000000000
+          Width = 169.008040000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataField = 'NAMEPR'
@@ -1098,8 +1116,8 @@ object DM: TDM
           ParentFont = False
         end
         object Memo6: TfrxMemoView
-          Left = 393.071120000000000000
-          Width = 68.031540000000010000
+          Left = 305.071120000000000000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -1116,8 +1134,8 @@ object DM: TDM
           ParentFont = False
         end
         object Memo7: TfrxMemoView
-          Left = 461.102660000000000000
-          Width = 68.031540000000010000
+          Left = 373.102660000000000000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataSet = frxDBDataset1
@@ -1134,7 +1152,7 @@ object DM: TDM
           ParentFont = False
         end
         object Memo8: TfrxMemoView
-          Left = 529.134199999999900000
+          Left = 441.134200000000000000
           Width = 49.133890000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
@@ -1153,8 +1171,8 @@ object DM: TDM
           ParentFont = False
         end
         object Memo9: TfrxMemoView
-          Left = 578.268090000000000000
-          Width = 68.031540000000010000
+          Left = 490.268090000000000000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataField = 'KOL'
@@ -1173,7 +1191,7 @@ object DM: TDM
         end
         object Memo10: TfrxMemoView
           Left = 714.331170000000000000
-          Width = 68.031540000000010000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataField = 'ACCOUNT'
@@ -1211,7 +1229,7 @@ object DM: TDM
         end
         object Memo12: TfrxMemoView
           Left = 842.835190000000000000
-          Width = 68.031540000000010000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataField = 'CEX'
@@ -1249,7 +1267,7 @@ object DM: TDM
         end
         object Memo14: TfrxMemoView
           Left = 646.299630000000000000
-          Width = 68.031540000000010000
+          Width = 68.031540000000000000
           Height = 18.897650000000000000
           StretchMode = smMaxHeight
           DataField = 'MEI'
@@ -1266,15 +1284,34 @@ object DM: TDM
             '[frxDBDataset1."MEI"]')
           ParentFont = False
         end
+        object Memo28: TfrxMemoView
+          Left = 558.000000000000000000
+          Width = 88.031540000000000000
+          Height = 18.897650000000000000
+          StretchMode = smMaxHeight
+          DataField = 'SUMMA'
+          DataSet = frxDBDataset1
+          DataSetName = 'frxDBDataset1'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Times New Roman'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            '[frxDBDataset1."SUMMA"]')
+          ParentFont = False
+        end
       end
       object PageFooter1: TfrxPageFooter
         FillType = ftBrush
         Height = 22.677180000000000000
-        Top = 222.992270000000000000
+        Top = 220.000000000000000000
         Width = 1046.929810000000000000
         object Memo2: TfrxMemoView
           Align = baRight
-          Left = 952.441560000000100000
+          Left = 952.441560000000000000
           Width = 94.488250000000000000
           Height = 18.897650000000000000
           Font.Charset = DEFAULT_CHARSET
@@ -1294,18 +1331,28 @@ object DM: TDM
     UserName = 'frxDBDataset1'
     CloseDataSource = False
     FieldAliases.Strings = (
-      'DATETR=DATETR'
+      'NEDOBAVRASH_ID=NEDOBAVRASH_ID'
       'SKLAD=SKLAD'
+      'ACCOUNT=ACCOUNT'
+      'DEBET=DEBET'
+      'MES=MES'
+      'GOD=GOD'
+      'STRUK_ID=STRUK_ID'
       'NUMKSU=NUMKSU'
       'NAMEPR=NAMEPR'
       'OPER=OPER'
+      'DATETR=DATETR'
       'NUMNDOK=NUMNDOK'
       'KOL=KOL'
       'MEI=MEI'
       'CEX=CEX'
       'POST=POST'
-      'ACCOUNT=ACCOUNT'
-      'DEBET=DEBET')
+      'NP=NP'
+      'MONEY=MONEY'
+      'MACHINE=MACHINE'
+      'DATE_TIME_UPDATE=DATE_TIME_UPDATE'
+      'USER_NAME=USER_NAME'
+      'SUMMA=SUMMA')
     DataSet = NesootvTbl
     BCDToCurrency = False
     Left = 608
@@ -1394,7 +1441,7 @@ object DM: TDM
     CachedUpdates = True
     ParamCheck = True
     SQL.Strings = (
-      'select *'
+      'select k2d_nedobav_rash.*'
       'from k2d_nedobav_rash'
       'where k2d_nedobav_rash.mes = :mes'
       'and k2d_nedobav_rash.god = :god'
@@ -1430,6 +1477,7 @@ object DM: TDM
       FieldName = 'NEDOBAVRASH_ID'
       Origin = '"K2D_NEDOBAV_RASH"."NEDOBAVRASH_ID"'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
     end
     object NesootvTblSKLAD: TIBStringField
       FieldName = 'SKLAD'
@@ -1517,30 +1565,26 @@ object DM: TDM
       Origin = '"K2D_NEDOBAV_RASH"."MACHINE"'
       Size = 5
     end
+    object NesootvTblDATE_TIME_UPDATE: TDateTimeField
+      FieldName = 'DATE_TIME_UPDATE'
+      Origin = '"K2D_NEDOBAV_RASH"."DATE_TIME_UPDATE"'
+    end
+    object NesootvTblUSER_NAME: TIBStringField
+      FieldName = 'USER_NAME'
+      Origin = '"K2D_NEDOBAV_RASH"."USER_NAME"'
+      Size = 10
+    end
+    object NesootvTblSUMMA: TFMTBCDField
+      FieldName = 'SUMMA'
+      Origin = '"K2D_NEDOBAV_RASH"."SUMMA"'
+      Precision = 18
+      Size = 6
+    end
   end
   object NesootvTblUpd: TIBUpdateSQLW
     RefreshSQL.Strings = (
       'Select '
-      '  NEDOBAVRASH_ID,'
-      '  SKLAD,'
-      '  ACCOUNT,'
-      '  DEBET,'
-      '  MES,'
-      '  GOD,'
-      '  STRUK_ID,'
-      '  NUMKSU,'
-      '  NAMEPR,'
-      '  OPER,'
-      '  DATETR,'
-      '  NUMNDOK,'
-      '  KOL,'
-      '  MEI,'
-      '  CEX,'
-      '  POST,'
-      '  NP,'
-      '  MONEY,'
-      '  MACHINE'
-      'from k2d_nedobav_rash'
+      'from k2d_nedobav_rash '
       'where'
       '  NEDOBAVRASH_ID = :NEDOBAVRASH_ID')
     ModifySQL.Strings = (
@@ -1557,6 +1601,7 @@ object DM: TDM
       '  MES = :MES,'
       '  MONEY = :MONEY,'
       '  NAMEPR = :NAMEPR,'
+      '  NEDOBAVRASH_ID = :NEDOBAVRASH_ID,'
       '  NP = :NP,'
       '  NUMKSU = :NUMKSU,'
       '  NUMNDOK = :NUMNDOK,'
@@ -1564,22 +1609,25 @@ object DM: TDM
       '  POST = :POST,'
       '  SKLAD = :SKLAD,'
       '  STRUK_ID = :STRUK_ID,'
-      '  NEDOBAVRASH_ID = :NEDOBAVRASH_ID'
+      '  SUMMA = :SUMMA'
       'where'
       '  NEDOBAVRASH_ID = :OLD_NEDOBAVRASH_ID')
     InsertSQL.Strings = (
       'insert into k2d_nedobav_rash'
       
-        '  (NEDOBAVRASH_ID, ACCOUNT, CEX, DATETR, DEBET, GOD, KOL, MACHIN' +
-        'E, MEI, MES, MONEY, NAMEPR, '
-      '   NP, NUMKSU, NUMNDOK, OPER, POST, SKLAD, STRUK_ID)'
+        '  (ACCOUNT, CEX, DATETR, DEBET, GOD, KOL, MACHINE, MEI, MES, MON' +
+        'EY, NAMEPR, '
+      
+        '   NEDOBAVRASH_ID, NP, NUMKSU, NUMNDOK, OPER, POST, SKLAD, STRUK' +
+        '_ID, SUMMA)'
       'values'
       
-        '  (:NEDOBAVRASH_ID, :ACCOUNT, :CEX, :DATETR, :DEBET, :GOD, :KOL,' +
-        ' :MACHINE, :MEI, :MES, :MONEY, '
+        '  (:ACCOUNT, :CEX, :DATETR, :DEBET, :GOD, :KOL, :MACHINE, :MEI, ' +
+        ':MES, :MONEY, '
       
-        '   :NAMEPR, :NP, :NUMKSU, :NUMNDOK, :OPER, :POST, :SKLAD, :STRUK' +
-        '_ID)')
+        '   :NAMEPR, :NEDOBAVRASH_ID, :NP, :NUMKSU, :NUMNDOK, :OPER, :POS' +
+        'T, :SKLAD, '
+      '   :STRUK_ID, :SUMMA)')
     DeleteSQL.Strings = (
       'delete from k2d_nedobav_rash'
       'where'
@@ -2526,5 +2574,12 @@ object DM: TDM
       Origin = '"MATROP"."GOST"'
       Size = 60
     end
+  end
+  object RashInd: TTable
+    CachedUpdates = True
+    SessionName = 'WorkSession'
+    TableName = 'f:\bm444\zerno1\RASXOD.DBF'
+    Left = 352
+    Top = 216
   end
 end

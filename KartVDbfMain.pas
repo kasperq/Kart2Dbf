@@ -60,6 +60,7 @@ type
     procedure fillStrkCombo;
     procedure freeSplash;
     procedure copyingSucceded;
+    procedure closeTables;
     function copyDbfToLocalDir() : boolean;
     function copyDbfToNetDir() : boolean;
     function getCurrentDateTimeString() : string;
@@ -507,6 +508,7 @@ begin
     else
     begin
       freeSplash;
+      closeTables;
       if (dm.NesootvTbl.RecordCount > 0) then
       begin
         log.appendMsg('Недобавленные расходы: ' + IntToStr(dm.NesootvTbl.RecordCount));
@@ -518,6 +520,7 @@ begin
   else
   begin
     freeSplash;
+    closeTables;
     ShowMessage('Нет данных по расходам для добавления.');
   end;
 end;
@@ -534,7 +537,7 @@ begin
     dm.q_iznos.First;
     while (not dm.q_iznos.Eof) do
     begin
-      if (addIznosRec2NomenDbf('RASX',
+      if (addIznosRec2NomenDbf('IZNOS',
                                dm.q_iznosNUMKSU.AsString,
                                dm.q_iznosSKLAD.AsString,
                                dm.q_iznosBALS.AsString)) then
@@ -576,12 +579,14 @@ begin
         log.appendMsg('Недобавленные расходы: ' + IntToStr(dm.NesootvTbl.RecordCount));
         dm.saveNesootvTbl;
       end;
+      closeTables;
       ShowMessage('Ни один расход не добавлен, т.к. не хватает количества на карточках.');
     end;
   end
   else
   begin
     freeSplash;
+    closeTables;
     ShowMessage('Нет данных по расходам для добавления.');
   end;
 end;
@@ -711,13 +716,15 @@ begin
   delDoubleRecs := false;
   deleting := false;
   try
+    splsh.showSplash('Сохранение данных. Подождите, пожалуйста...');
     setPathStrings;
-    dm.activatePrihDbf(oldFilePath, '', true);
-    dm.setPrixodId;
-    dm.PrihDbf.Close;
-    dm.activateRashDbf(oldFilePath, '', true);
-    dm.setRasxodId;
-    dm.RashDbf.Close;
+    if (copyObjects = 0) or (copyObjects = 1) then
+    begin
+      log.appendMsg('переиндексация Prih.dbf');
+      dm.activatePrihDbf(oldFilePath, '', false);
+      dm.setPrixodId;
+      dm.PrihDbf.Close;
+    end;
     if (saveOldFiles()) and (copyDbfToLocalDir()) then
     begin
       splsh.showSplash('Сохранение данных. Подождите, пожалуйста...');
@@ -783,6 +790,7 @@ begin
   else
   begin
     freeSplash;
+    closeTables;
     log.appendMsg('Данные по приходам были уже ранее добавлены.');
     ShowMessage('Данные по приходам были уже ранее добавлены.');
   end;
@@ -792,6 +800,10 @@ end;
 
 procedure TKartVDbfForm.copyRash(copyObjects : integer);
 begin
+  log.appendMsg('переиндексация Rash.dbf');
+  dm.activateRashInd(localDirPath);
+  dm.setRasxodId;
+  dm.RashInd.Close;
   if (cb_vxControl.Checked) then
     log.appendMsg('Входной контроль.');
   log.appendMsg('Начинаем копирование расходов.');
@@ -808,6 +820,10 @@ end;
 
 procedure TKartVDbfForm.copyIznos(copyObjects : integer);
 begin
+  log.appendMsg('переиндексация Rash.dbf');
+  dm.activateRashInd(localDirPath);
+  dm.setRasxodId;
+  dm.RashInd.Close;
   log.appendMsg('Начинаем копирование износа.');
   dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString, true);
@@ -825,15 +841,20 @@ begin
   splsh.hideSplash;
 end;
 
-procedure TKartVDbfForm.copyingSucceded;
+procedure TKartVDbfForm.closeTables;
 begin
-  log.appendMsg('Копирование завершено успешно.');
   dm.Nomen.Close;
   dm.Rash.Close;
   dm.Prih.Close;
   dm.NomenOld.Close;
   dm.RashOld.Close;
   dm.PrihOld.Close;
+end;
+
+procedure TKartVDbfForm.copyingSucceded;
+begin
+  log.appendMsg('Копирование завершено успешно.');
+  closeTables;
   log.appendMsg('Добавляем дату окончания в имени резервной папки: ' + newFilePath);
   RenameFile(newFilePath, Copy(newFilePath, 0, length(newFilePath) - 1)
              + '__' + getCurrentDateTimeString() + '\');
