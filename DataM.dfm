@@ -35,9 +35,18 @@ object DM: TDM
     CachedUpdates = False
     ParamCheck = True
     SQL.Strings = (
+      'select document.doc_id, '
       
-        'select document.doc_id, iif(relaStr.stkod is not null, relaStr.s' +
-        'tkod, configumc.stkod) sklad,'
+        '--iif((relaStr.stkod is not null) or (relaStr.stkod='#39'1600'#39'), rel' +
+        'aStr.stkod, configumc.stkod) sklad,'
+      
+        'iif((relaStr.stkod is not null) and (relaStr.stkod='#39'1600'#39') and (' +
+        '(kart.credit = '#39'10/10'#39') or (kart.credit = '#39'10/11'#39') or (ostatki.a' +
+        'ccount = '#39'10/10'#39') or (ostatki.account = '#39'10/11'#39')), '
+      '    configumc.stkod, '
+      
+        '    iif(relaStr.stkod is not null, relaStr.stkod, configumc.stko' +
+        'd)) sklad,'
       'padleft(TRIM(cast(kart.ksm_id as char(5))),7,'#39'0'#39') numksu,'
       
         'matrop.nmat namepr, matrop.nmats nameprs, matrop.xarkt, matrop.g' +
@@ -73,8 +82,9 @@ object DM: TDM
         'numeric(15,6)) as summa,'
       'kart.summa_s_nds,'
       
-        'document.nds, kart.credit account, tip_oper.nam_op, tipdok.short' +
-        '_name, tip_oper.tip_op_id,'
+        'document.nds, cast(iif(kart.credit is null, ostatki.account, kar' +
+        't.credit) as char(5)) account, '
+      'tip_oper.nam_op, tipdok.short_name, tip_oper.tip_op_id,'
       
         'tipdok.tip_dok_id, document.klient_id, struk.stname, struk.stkod' +
         ', confPost.stkod,'
@@ -419,8 +429,16 @@ object DM: TDM
     ParamCheck = True
     SQL.Strings = (
       
-        'select iif(relaStr.stkod is not null, relaStr.stkod, configumc.s' +
-        'tkod) sklad,'
+        'select iif((relaStr.stkod is not null) and (relaStr.stkod='#39'1600'#39 +
+        ') and ((ostatki.account = '#39'10/10'#39') or (ostatki.account = '#39'10/11'#39 +
+        ')), '
+      '    configumc.stkod, '
+      
+        '    iif(relaStr.stkod is not null, relaStr.stkod, configumc.stko' +
+        'd)) sklad,'
+      
+        '--iif(relaStr.stkod is not null, relaStr.stkod, configumc.stkod)' +
+        ' sklad,'
       'padleft(TRIM(cast(kart.ksm_id as char(5))), 7, '#39'0'#39') numksu,'
       
         'matrop.nmat namepr, matrop.nmats nameprs, matrop.xarkt, matrop.g' +
@@ -2444,11 +2462,9 @@ object DM: TDM
         'rtrim(ltrim(rtrim(ltrim(uslugi.account)) || '#39'/'#39' || rtrim(ltrim(u' +
         'slugi.sub_id)))) debet,'
       'matrop.nmats nameprs, matrop.xarkt, matrop.gost,'
-      'iif(configumc.struk_id in (542, 543, 544, 545, 546, 708, -540), '
-      '    '#39'1600'#39','
-      '    iif(configumc.struk_id in (107,232,230,479),'
-      '        '#39'4300'#39','
-      '        configumc.stkod)) sklad'
+      'iif(configumc.struk_id in (107,232,230,479),'
+      '    '#39'4300'#39','
+      '    configumc.stkod) sklad'
       'from document'
       'inner join uslugi on uslugi.doc_id = document.doc_id'
       'inner join matrop on matrop.ksm_id = uslugi.tag'

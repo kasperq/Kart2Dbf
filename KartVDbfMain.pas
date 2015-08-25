@@ -350,8 +350,8 @@ begin
     if (dm.appendNomen(dm.q_iznosBALS.AsString, dm.q_iznosNUMKSU.AsString,
                        dm.q_iznosNAMEPR.AsString, dm.q_iznosNAMEPRS.AsString,
                        dm.q_iznosXARKT.AsString, dm.q_iznosGOST.AsString,
-                       dm.q_iznosKEI.AsString, dm.q_iznosSKLAD.AsString,
-                       dm.q_iznosEIZ.AsString, dm.q_iznosDATETR.AsDateTime)) then
+                       dm.q_iznosEIZ.AsString, dm.q_iznosSKLAD.AsString,
+                       dm.q_iznosKEI.AsString, dm.q_iznosDATETR.AsDateTime)) then
         addIznosRec2NomenDbf := addIznosRec2NomenDbf(kartType, numkcu, sklad, bals);
   end;
 end;
@@ -777,7 +777,10 @@ begin
   log.appendMsg('Начинаем копирование приходов.');
   dm.openPrihDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString);
-  dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false);
+  if (DM.buxName = 'bm6') then
+    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, false)
+  else
+    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false);
   dm.restoreNomenForPrih(curMonth, curYear, buxNameCombo.Text);
   dm.clearPrih;
   dm.activateKartPrihQuery(curMonthEdit.Value, curYearEdit.Value);
@@ -809,7 +812,10 @@ begin
   log.appendMsg('Начинаем копирование расходов.');
   dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString, false);
-  dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false);
+  if (DM.buxName = 'bm6') then
+    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, false)
+  else
+    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false);
   dm.restoreNomenForRash(curMonth, curYear, buxNameCombo.Text);
   dm.clearRash;
   dm.activateKartRashQuery(curMonthEdit.Value, curYearEdit.Value);
@@ -827,7 +833,10 @@ begin
   log.appendMsg('Начинаем копирование износа.');
   dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString, true);
-  dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, true);
+  if (DM.buxName = 'bm6') then
+    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, false)
+  else
+    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, true);
   dm.restoreNomenForRash(curMonth, curYear, buxNameCombo.Text);
   dm.clearRash;
   dm.openIznos(curMonthEdit.Value, curYearEdit.Value, dm.ConfigUMCSTRUK_ID.AsInteger);

@@ -508,8 +508,8 @@ begin
     end;
 
     try
-      if (NomenMem.FieldByName('KOL').AsFloat + znak * kol >= 0)
-         or (iznos) then     // если достаточно количества на карточке
+      if ((NomenMem.FieldByName('KOL').AsFloat + znak * kol >= 0)
+         or (iznos)) or (kartType = 'PRIX') then     // если достаточно количества на карточке
       begin
         NomenMem.Edit;
         NomenMem.FieldByName('KOL').AsFloat := StrToFloat(NomenMem.FieldByName('KOL').AsString)
