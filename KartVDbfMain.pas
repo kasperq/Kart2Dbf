@@ -834,7 +834,7 @@ begin
   dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString, true);
   if (DM.buxName = 'bm6') then
-    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, false)
+    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, true)
   else
     dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, true);
   dm.restoreNomenForRash(curMonth, curYear, buxNameCombo.Text);

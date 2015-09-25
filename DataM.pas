@@ -621,8 +621,11 @@ end;
 procedure TDM.openPrihDbfQuery(localPath, stkodRela, strukId, stkod : string);
 begin
   Prih.Close;
-  Prih.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'prixod.dbf" prixod '
-                        + 'where prixod.doc_id <> 0 and prixod.sklad = "' + stkodRela + '" ';
+  Prih.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'prixod.dbf" prixod ';
+  if (stkodRela = '1600') or (stkodRela = '4300') then
+    Prih.EhSQL.Text := Prih.EhSQL.Text + 'where prixod.doc_id <> 0 and prixod.sklad = "' + stkod + '" '
+  else
+    Prih.EhSQL.Text := Prih.EhSQL.Text + 'where prixod.doc_id <> 0 and prixod.sklad = "' + stkodRela + '" ';
   if (stkodRela <> stkod) or (stkod = '1600') or (stkod = '4300') then
   	Prih.EhSQL.Text := Prih.EhSQL.Text + ' and prixod.struk_id = "' + strukId + '" ';
   UpdPrih.InsertSQL.Text := 'insert into "' + AnsiLowerCase(localPath) + 'prixod.dbf" '
