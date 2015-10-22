@@ -446,12 +446,19 @@ begin
   end;
   log.appendMsg('Сохранение PRIXOD.dbf');
   dm.Prih.ApplyUpdates;
+  log.appendMsg('dm.Prih.ApplyUpdates;');
   dm.Prih.CommitUpdates;
+  log.appendMsg('dm.Prih.CommitUpdates;');
   dm.Prih.Close;
+  log.appendMsg('dm.Prih.Close;');
   dm.WorkSession.Active := false;
+  log.appendMsg('dm.WorkSession.Active := false;');
   dm.WorkSession.Active := true;
+  log.appendMsg('dm.WorkSession.Active := true;');
   dm.activatePrihDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true);
+  log.appendMsg('dm.activatePrihDbf');
   DbiPackTable(dm.PrihDbf.dbhandle, dm.PrihDbf.Handle, nil, nil, false);
+  log.appendMsg('DbiPackTable(');
   dm.PrihDbf.Close;
   log.appendMsg('Сохранено.');
   if (copyObjects = 1) then
@@ -777,8 +784,13 @@ begin
   log.appendMsg('Начинаем копирование приходов.');
   dm.openPrihDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString);
-  if (DM.buxName = 'bm6') then
-    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, false)
+  if (DM.buxName = dm.specBm) then
+  begin
+    if (dm.ConfigUMCSTKODRELA.AsString = '4300') then
+      dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false)
+    else
+      dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, false);
+  end
   else
     dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false);
   dm.restoreNomenForPrih(curMonth, curYear, buxNameCombo.Text);
@@ -799,6 +811,7 @@ begin
   end;
   log.appendMsg('Копирование приходов закончено.');
   dm.Prih.Close;
+  closeTables;
 end;
 
 procedure TKartVDbfForm.copyRash(copyObjects : integer);
@@ -812,8 +825,13 @@ begin
   log.appendMsg('Начинаем копирование расходов.');
   dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString, false);
-  if (DM.buxName = 'bm6') then
-    dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, false)
+  if (DM.buxName = dm.specBm) then
+  begin
+    if (dm.ConfigUMCSTKODRELA.AsString = '4300') then
+      dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false)
+    else
+      dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, false);
+  end
   else
     dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false);
   dm.restoreNomenForRash(curMonth, curYear, buxNameCombo.Text);
@@ -822,6 +840,7 @@ begin
   if (addKartRashRecs2RashAndNomenDbf()) then
     copyingSucceded;
   dm.Rash.Close;
+  closeTables;
 end;
 
 procedure TKartVDbfForm.copyIznos(copyObjects : integer);
@@ -833,7 +852,7 @@ begin
   log.appendMsg('Начинаем копирование износа.');
   dm.openRashDbfQuery(localDirPath, dm.ConfigUMCSTKODRELA.AsString,
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString, true);
-  if (DM.buxName = 'bm6') then
+  if (DM.buxName = dm.specBm) then
     dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, true)
   else
     dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, true);
@@ -843,6 +862,7 @@ begin
   if (addIznos2RashAndNomenDbf()) then
     copyingSucceded;
   dm.Rash.Close;
+  closeTables;
 end;
 
 procedure TKartVDbfForm.freeSplash;
@@ -858,6 +878,8 @@ begin
   dm.NomenOld.Close;
   dm.RashOld.Close;
   dm.PrihOld.Close;
+  dm.RashInd.Close;
+  dm.Bmomts.Close;
 end;
 
 procedure TKartVDbfForm.copyingSucceded;
@@ -908,8 +930,10 @@ procedure TKartVDbfForm.buxNameComboChange(Sender: TObject);
 begin
   setPathStrings;
   dm.setBuxName(AnsiLowerCase(buxNameCombo.Text));
-  if (dm.buxName  = 'bm6') and (cb_specOdezh.Visible) then
-    cb_specOdezh.Checked := true;
+  if (dm.buxName  = dm.specBm) and (cb_specOdezh.Visible) then
+    cb_specOdezh.Checked := true
+  else
+    cb_specOdezh.Checked := false;
 end;
 
 procedure TKartVDbfForm.lastNeobrRashBtnClick(Sender: TObject);
@@ -959,6 +983,13 @@ procedure TKartVDbfForm.FormShow(Sender: TObject);
 var
   year, month, day : word;
 begin
+  {$IFDEF RELEASE}
+  dm.specBm := 'bm6';
+  {$ENDIF}
+  {$IFDEF DEBUG}
+  dm.specBm := 'bm444';
+//  dm.specBm := 'bm6';
+  {$ENDIF}
   prihCopyBtn.Visible := DM.showPrih;
   cb_vxControl.Visible := dm.showPrih;
   cb_specOdezh.Visible := dm.showPrih;
@@ -979,6 +1010,7 @@ begin
 //  dm.ConfigUMC.Locate('struk_id', '500', []);
 //  strkCombo.KeyValue := dm.ConfigUMCSTRUK_ID.AsInteger;
   fillStrkCombo;
+  buxNameComboChange(sender);
 //  dm.diskPath := 'd';
   dm.diskPath := 'f';
   dm.setVxodControlRashQuery(cb_vxControl.Checked);

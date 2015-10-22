@@ -343,7 +343,7 @@ type
 
     var
       filterMonth, filterGod, filterStrukId, maxPrId, maxRId : integer;
-      userName, buxName : string;
+      userName, buxName, specBm : string;
       showPrih, vxControl : boolean;
 
   end;
@@ -622,7 +622,7 @@ procedure TDM.openPrihDbfQuery(localPath, stkodRela, strukId, stkod : string);
 begin
   Prih.Close;
   Prih.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'prixod.dbf" prixod ';
-  if (stkodRela = '1600') or (stkodRela = '4300') then
+  if (stkodRela = '1600') then
     Prih.EhSQL.Text := Prih.EhSQL.Text + 'where prixod.doc_id <> 0 and prixod.sklad = "' + stkod + '" '
   else
     Prih.EhSQL.Text := Prih.EhSQL.Text + 'where prixod.doc_id <> 0 and prixod.sklad = "' + stkodRela + '" ';
@@ -695,8 +695,20 @@ begin
     Rash.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" rasxod '
                        + 'where rasxod.doc_id = -3 '
   else
-    Rash.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" rasxod '
+  begin
+    if (buxName = specBm) then
+    begin
+      if (stkodRela = '1600') then
+        Rash.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" rasxod '
+                       + 'where rasxod.doc_id > 0 and rasxod.sklad = "' + stkod + '" '
+      else
+        Rash.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" rasxod '
                        + 'where rasxod.doc_id > 0 and rasxod.sklad = "' + stkodRela + '" ';
+    end
+    else
+      Rash.EhSQL.Text := 'select * from "' + AnsiLowerCase(localPath) + 'rasxod.dbf" rasxod '
+                         + 'where rasxod.doc_id > 0 and rasxod.sklad = "' + stkodRela + '" ';
+  end;
   if (stkodRela <> stkod) or (stkod = '1600') or (stkod = '4300') then
   	Rash.EhSQL.Text := Rash.EhSQL.Text + ' and rasxod.struk_id = "' + strukId + '" ';
   UpdRash.InsertSQL.Text := 'insert into "' + AnsiLowerCase(localPath) + 'rasxod.dbf" '
@@ -1042,7 +1054,7 @@ end;
 procedure TDM.setKartRashQueryUsl;
 begin
   KartRashQuery.Close;
-  if (buxName = 'bm6') then
+  if (buxName = specBm) then
     KartRashQuery.MacroByName('usl').AsString := '(document.tip_dok_id in (173, 198) '
                                                  + ' or (document.tip_op_id = 8 '
                                                  + ' and document.tip_dok_id in (5, 183)'
