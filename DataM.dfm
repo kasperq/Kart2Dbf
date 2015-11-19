@@ -40,9 +40,10 @@ object DM: TDM
         '--iif((relaStr.stkod is not null) or (relaStr.stkod='#39'1600'#39'), rel' +
         'aStr.stkod, configumc.stkod) sklad,'
       
-        'iif((relaStr.stkod is not null) and (relaStr.stkod='#39'1600'#39') and (' +
-        '(kart.credit = '#39'10/10'#39') or (kart.credit = '#39'10/11'#39') or (ostatki.a' +
-        'ccount = '#39'10/10'#39') or (ostatki.account = '#39'10/11'#39')), '
+        'iif((relaStr.stkod is not null) and ((relaStr.stkod='#39'1600'#39') or (' +
+        'relaStr.stkod='#39'4300'#39')) and ((kart.credit = '#39'10/10'#39') or (kart.cre' +
+        'dit = '#39'10/11'#39') or (ostatki.account = '#39'10/10'#39') or (ostatki.accoun' +
+        't = '#39'10/11'#39')), '
       '    configumc.stkod, '
       
         '    iif(relaStr.stkod is not null, relaStr.stkod, configumc.stko' +
@@ -429,9 +430,9 @@ object DM: TDM
     ParamCheck = True
     SQL.Strings = (
       
-        'select iif((relaStr.stkod is not null) and (relaStr.stkod='#39'1600'#39 +
-        ') and ((ostatki.account = '#39'10/10'#39') or (ostatki.account = '#39'10/11'#39 +
-        ')), '
+        'select iif((relaStr.stkod is not null) and ((relaStr.stkod='#39'1600' +
+        #39') or (relaStr.stkod='#39'4300'#39')) and ((ostatki.account = '#39'10/10'#39') o' +
+        'r (ostatki.account = '#39'10/11'#39')), '
       '    configumc.stkod, '
       
         '    iif(relaStr.stkod is not null, relaStr.stkod, configumc.stko' +

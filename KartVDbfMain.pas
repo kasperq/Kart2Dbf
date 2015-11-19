@@ -68,9 +68,11 @@ type
     procedure copyPrih(copyObjects : integer);
     procedure copyRash(copyObjects : integer);
     procedure copyIznos(copyObjects : integer);
+    function archivateNetCopy() : boolean;
+    function copyAndArchivateNetCopy() : boolean;
 
     var
-      newFilePath, oldFilePath, localDirPath : string;
+      newFilePath, oldFilePath, localDirPath, netCopyDirName, netCopyDirPath : string;
       log : TLogger;
       tF : TextFile;
       splsh : TFSplash;
@@ -155,10 +157,14 @@ end;
 
 procedure TKartVDbfForm.setPathStrings;
 begin
-  localDirPath := 'c:\work\' + buxNameCombo.Text + '_' + dm.ConfigUMCSTKOD.AsString
+  localDirPath := 'c:\work\kart2dbf\' + curMonthEdit.Text + '\'
+                  + buxNameCombo.Text + '_' + dm.ConfigUMCSTKOD.AsString
                   + '_' + curMonthEdit.Text + '_' + getCurrentDateTimeString() + '\';
   oldFilePath := dm.diskPath + buxNameCombo.Text + '\zerno1\';
-  newFilePath := dm.diskPath + buxNameCombo.Text + '\zerno1\' + getCurrentDateTimeString() + '\';
+  netCopyDirName := getCurrentDateTimeString();
+  netCopyDirPath := dm.diskPath + buxNameCombo.Text + '\zerno1\kart2dbf\'
+                 + curMonthEdit.Text + '\';
+  newFilePath := netCopyDirPath + netCopyDirName + '\';
 end;
 
 procedure TKartVDbfForm.cb_specOdezhClick(Sender: TObject);
@@ -231,14 +237,21 @@ begin
     fileCopy(localDirPath + 'prixod.dbf', newFilePath + 'prixod_new.dbf');
     fileCopy(localDirPath + 'rasxod.dbf', newFilePath + 'rasxod_new.dbf');
     dm.WorkSession.Close;
-    if (FileExists(oldFilePath + 'nomen.dbf'))
-       and (FileExists(oldFilePath + 'rasxod.dbf'))
-       and (FileExists(oldFilePath + 'prixod.dbf')) then
+    while (not FileExists(newFilePath + 'nomen.dbf'))
+           and (not FileExists(newFilePath + 'rasxod.dbf'))
+           and (not FileExists(newFilePath + 'prixod.dbf'))  do
+    begin
+
+    end;
+
+    if (FileExists(newFilePath + 'nomen.dbf'))
+       and (FileExists(newFilePath + 'rasxod.dbf'))
+       and (FileExists(newFilePath + 'prixod.dbf')) then
     begin
       log.appendMsg('Удаление NOMEN, PRIXOD, RASXOD.dbf из локальной папки');
-      DeleteFileA(PAnsiChar(localDirPath + 'nomen.dbf'));
-      DeleteFileA(PAnsiChar(localDirPath + 'prixod.dbf'));
-      DeleteFileA(PAnsiChar(localDirPath + 'rasxod.dbf'));
+      DeleteFileW(PWideChar(localDirPath + 'nomen.dbf'));
+      DeleteFileW(PWideChar(localDirPath + 'prixod.dbf'));
+      DeleteFileW(PWideChar(localDirPath + 'rasxod.dbf'));
       log.appendMsg('Удаление локальной папки: ' + localDirPath);
       RemoveDir(localDirPath);
       log.appendMsg('Удалили');
@@ -252,6 +265,32 @@ begin
                  + ' Обратитесь к программисту! ', mtWarning, [mbOK], 0);
     end;
   end;
+end;
+
+function TKartVDbfForm.archivateNetCopy() : boolean;
+var
+  shellInfo : TShellExecuteInfoW;
+begin
+  result := false;
+  FillChar(shellInfo, SizeOf(shellInfo), 0);
+  shellInfo.Wnd := self.Handle;
+  shellInfo.lpVerb := 'open';
+  shellInfo.nShow := SW_HIDE;
+  shellInfo.cbSize := SizeOf(shellInfo);
+  shellInfo.lpFile := 'f:\doc\replbuh\7z.exe';
+  shellInfo.lpParameters := PWideChar('a -t7z -ssw -mx7 -mmt2 -sdel '
+                            + netCopyDirPath + netCopyDirName + '.7z '
+                            + newFilePath);
+  if (ShellExecuteEx(@shellInfo)) then
+    result := true;
+end;
+
+function TKartVDbfForm.copyAndArchivateNetCopy() : boolean;
+begin
+  result := false;
+  if (copyDbfToNetDir()) then
+    if (archivateNetCopy()) then
+      result := true;
 end;
 
 procedure TKartVDbfForm.neobrRashBtnClick(Sender: TObject);
@@ -509,7 +548,7 @@ begin
       DbiPackTable(dm.RashDbf.dbhandle, dm.RashDbf.Handle, nil, nil, false);
       dm.RashDbf.Close;
       log.appendMsg('Сохранено.');
-      if (copyDbfToNetDir()) then
+      if (copyAndArchivateNetCopy()) then
         result := true;
     end
     else
@@ -987,8 +1026,8 @@ begin
   dm.specBm := 'bm6';
   {$ENDIF}
   {$IFDEF DEBUG}
-  dm.specBm := 'bm444';
-//  dm.specBm := 'bm6';
+//  dm.specBm := 'bm444';
+  dm.specBm := 'bm6';
   {$ENDIF}
   prihCopyBtn.Visible := DM.showPrih;
   cb_vxControl.Visible := dm.showPrih;
