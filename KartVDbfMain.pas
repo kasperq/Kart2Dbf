@@ -866,9 +866,9 @@ begin
                       dm.ConfigUMCSTRUK_ID.AsString, dm.ConfigUMCSTKOD.AsString, false);
   if (DM.buxName = dm.specBm) then
   begin
-    if (dm.ConfigUMCSTKODRELA.AsString = '4300') then
-      dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false)
-    else
+//    if (dm.ConfigUMCSTKODRELA.AsString = '4300') then
+//      dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKODRELA.AsString, true, false)
+//    else
       dm.activateNomenDbf(localDirPath, dm.ConfigUMCSTKOD.AsString, true, false);
   end
   else

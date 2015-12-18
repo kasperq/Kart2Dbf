@@ -1062,6 +1062,7 @@ begin
   else
     KartRashQuery.MacroByName('usl').AsString := 'tip_oper.gr_op_id = 2 and tip_oper.tip_op_id <> 135 '
                                                  + ' and tip_oper.tip_op_id <> 153 '
+                                                 + ' and tip_oper.tip_op_id <> 30 '
                                                  + ' and document.tip_dok_id <> 198 '
                                                  + ' and document.tip_dok_id <> 173 '
                                                  + ' and (ostatki.account <> ''10/10'' '
